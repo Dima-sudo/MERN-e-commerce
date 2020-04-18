@@ -1,0 +1,17 @@
+@import '../theme';
+@import '../utility';
+
+// @import "~antd/dist/antd.less";
+
+.page-wrapper{
+    background-color: $light;
+    height: 100vh;
+}
+
+.home-content__wrapper{
+    height: 80vh;
+}
+
+
+
+
