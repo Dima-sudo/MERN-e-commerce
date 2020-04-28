@@ -34,6 +34,19 @@ const productSchema = new Schema(
     tags: {
         type: [String],
         required: false
+    },
+    comments: {
+      type: [
+        {type: Schema.Types.ObjectId, ref: 'Comment'}
+      ]
+    },
+    images: {
+      // Each string is an object containing the url and id. The id is used for api actions
+      type: [
+        {public_id: String, url: String}
+      ],
+      required: false,
+      default: []
     }
   },
 

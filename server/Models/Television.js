@@ -18,4 +18,4 @@ const Television = AbstractProduct.discriminator('Television', new Schema({
     }
 }));
 
-module.exports = ('Television');
+module.exports = mongoose.model('Television');

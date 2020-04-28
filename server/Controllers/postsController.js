@@ -7,7 +7,7 @@ exports.getPosts = async (req, res) => {
     return res.status(200).json({ posts: foundPosts });
   } catch (err) {
     return res.status(500).json({
-      message: "There is an error in dislaying the posts",
+      message: "Error fetching posts from DB",
       error: err,
       status: "failure"
     });
@@ -15,12 +15,9 @@ exports.getPosts = async (req, res) => {
 };
 
 exports.createPost = async (req, res) => {
-  const { title, content, author } = req.body;
 
   const post = new Post({
-    title,
-    content,
-    author
+    ...req.body
   });
 
   try {
@@ -61,7 +58,7 @@ exports.findById = async (req, res) => {
     try{
         const foundPost = await Post.findById({_id: postId});
 
-        if(!foundPost) return res.status(204).json({message: "No post was found in the database", error:"No post found", status: "failure"});
+        if(!foundPost) return res.status(204).json({message: "No post was found in the DB", error:"No post found", status: "failure"});
         return res.status(200).json({message: "Post found", post: foundPost, status: "success"});
     }
     catch(err){
