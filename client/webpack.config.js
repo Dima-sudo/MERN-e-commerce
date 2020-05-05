@@ -5,6 +5,8 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
+const Dotenv = require('dotenv-webpack');
+
 module.exports = {
   entry: ["@babel/polyfill", "./src/index.js"], // Polyfill for async functionality
   output: {
@@ -17,6 +19,25 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.svg$/,
+        use: [
+          {
+            loader: 'svg-url-loader',
+            options: {
+              limit: 10000,
+            },
+          },
+        ],
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
+      },
       {
         test: /\.scss$/,
         use: [
@@ -63,6 +84,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./src/index.html",
     }),
+    new Dotenv()
     // new AntdScssThemePlugin(path.join(__dirname, "src", "ant-overrides.scss")),
   ],
 };

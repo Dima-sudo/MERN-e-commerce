@@ -1,36 +1,43 @@
-@import '../theme';
-@import '../utility';
 
-.form-spinner__positioning{
+@import '../utility';
+@import '../theme';
+
+.create-spinner__positioning{
     display: flex;
     justify-content: center;
 }
 
-.login-form{
-    width: 40%;
+.create-form{
+    width: 45%;
     margin-right: auto;
     margin-left: auto;
 }
 
-.login-form__title{
+.create-form__title{
     font-size: 1.6rem;
-    color: rgba(0,0,0,0.65)
+    color: rgba(0,0,0,0.65);
 }
 
 @media screen and (max-width: 480px) and (min-width: 0px){
-    .login-form{
+    .create-form{
         width: 90%;
     }
 }
 
 @media screen and (max-width: 768px) and (min-width: 481px){
-    .login-form{
+    .create-form{
         width: 70%;
     }
 }
 
 @media screen and (max-width: 1024px) and (min-width: 769px){
-    .login-form{
+    .create-form{
+        width: 60%;
+    }
+}
+
+@media screen and (max-width: 1280px) and (min-width: 1023px){
+    .create-form{
         width: 50%;
     }
 }

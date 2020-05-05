@@ -1,8 +1,6 @@
 @import '../theme';
 @import '../utility';
 
-
-
 td a {
     cursor: auto;
 }
@@ -18,12 +16,21 @@ td a {
 
 .ant-carousel .slick-slide {
     text-align: center;
-    height: 160px;
+    height: 420px;
     line-height: 160px;
-    background: #364d79;
+    background: #fff;
     overflow: hidden;
   }
   
-  .ant-carousel .slick-slide h3 {
-    color: #fff;
+  .ant-carousel .slick-slide img {
+    min-height: 420px !important;
+  }
+  
+  .carousel-slide{
+      min-height: 100% !important;
+  }
+ 
+  .ant-card-cover img{
+      min-height: 200px;
+      height: 200px !important;
   }

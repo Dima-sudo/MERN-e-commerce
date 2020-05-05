@@ -1,18 +1,16 @@
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
-import { getProducts } from "../Redux/Actions/ProductActions";
+import { getLaptops } from "../Redux/Actions/ProductActions";
 
-import { Row, Col, Layout } from "antd";
+import { Row, Col } from "antd";
 import ProductCard from "../Components/ProductCard";
-
-const { Content } = Layout;
 
 import { v4 as uuidv } from "uuid";
 
 import "../scss/Pages/Products.scss";
 
-class Products extends Component {
+class Laptops extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -21,7 +19,7 @@ class Products extends Component {
   }
 
   async componentDidMount() {
-    await this.props.getProducts();
+    await this.props.getLaptops();
   }
 
   componentWillReceiveProps() {
@@ -42,6 +40,7 @@ class Products extends Component {
         <Col xs={24} md={12} lg={8} className="content-position" key={uuidv()}>
           {/* Some formatting in description field to keep long descriptions manageable */}
           <ProductCard
+            className="grid-tile__align"
             title={product.title}
             description={`${product.description.slice(0, 50).trim()}...`}
             self={product}
@@ -53,16 +52,12 @@ class Products extends Component {
   };
 
   render() {
-    return (
-      <Content className="container">
-        <Row>{this.renderItems()}</Row>
-      </Content>
-    );
+    return <Row className="container">{this.renderItems()}</Row>;
   }
 }
 
 const mapStateToProps = (store) => {
-  return { Products: store.Products.AllProducts };
+  return { Products: store.Products.Laptops };
 };
 
-export default connect(mapStateToProps, { getProducts })(Products);
+export default connect(mapStateToProps, { getLaptops })(Laptops);

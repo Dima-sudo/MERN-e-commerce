@@ -1,23 +1,38 @@
 import React, { Component } from "react";
 
 import { Card, Avatar, Breadcrumb, Space } from "antd";
-import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 
 import { Link } from "react-router-dom";
+import {v4 as uuid} from 'uuid';
+
+import '../scss/Components/ProductCard.scss'
+
+import noImage from '../Images/no-image.png'
 
 const { Meta } = Card;
 
 class ProductCard extends Component {
+
+  renderThumbnail = () => {
+    if(this.props.self.images.length > 0){
+      return this.props.self.images[0].url;
+    }
+    
+    // If no images on product
+    return noImage;
+  }
+
   render() {
     return (
-      <div>
+      <div className="mt-5">
         <Card
           style={{ width: 300 }}
           cover={
             <img
-              alt="example"
+              alt="thumbnail_image"
               src={
-                "https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+              this.renderThumbnail()
               }
             />
           }
@@ -29,8 +44,7 @@ class ProductCard extends Component {
                 <PlusOutlined key="plus" />
                 <span>More</span>
               </Space>
-            </Link>,
-            <EditOutlined key="edit" />,
+            </Link>
           ]}
           hoverable={true}
         >

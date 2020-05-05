@@ -1,0 +1,19 @@
+.proto-1{
+    background-color: pink;
+}
+
+.proto-2{
+    background-color: lightblue;
+}
+
+.proto-3{
+    background-color: lightgreen;
+}
+
+.user-panel{
+    & div.ant-card-body{
+        min-width: 100% !important;
+        display: flex;
+        justify-content: space-evenly;
+    }
+}

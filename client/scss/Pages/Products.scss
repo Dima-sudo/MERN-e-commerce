@@ -1,6 +1,11 @@
 .content-position{
     display: flex;
     justify-content: center;
-    align-items: center;
     min-height: 400px;
+}
+
+.grid-tile__align{
+    display: flex;
+    justify-content: center;
+    align-content: center;
 }

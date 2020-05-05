@@ -1,16 +1,13 @@
 @import './theme';
 
-.page-wrapper{
-    margin-top: 56px;
-    background-color: $light;
-}
-
 .container {
     width: 100%;
     padding-right: 1rem;
     padding-left: 1rem;
     margin-right: auto;
     margin-left: auto;
+    padding-bottom: 3rem;
+    min-height: 90vh;
   }
   
   @media (min-width: 576px) {

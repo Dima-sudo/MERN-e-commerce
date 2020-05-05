@@ -1,16 +1,60 @@
-import axios from 'axios'
+import axios from 'axios';
+import alertConfig from './AlertActions'
 
 
 export const login = (loginForm) => {
     return async (dispatch) => {
 
-        const res = await axios.post('http://localhost:8080/products/', loginForm);
+        const config = {
+            headers: {
+              'Content-Type': 'application/json',
+              'Access-Control-Allow-Origin': '*',
+              },
+              method: 'POST'
+            }
+
+        
+                const res = await axios.post('http://localhost:8080/auth/login', loginForm, config);
+
+                console.log(res);
+
+                const action = {
+                    type: 'LOGIN',
+                    payload: res.data
+                }
+        
+                
+                dispatch(action);
+
+                const alert = {
+                    message: "You have successfully logged in",
+                    type: "success"
+                }
+
+                dispatch(alertConfig(alert));
+    }
+}
+
+export const logout = () => {
+    return async (dispatch, getState) => {
+
+        const token = getState().isLoggedIn.token;
+
+        const options = {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+                }
+        }
+
+        await axios.get('http://localhost:8080/auth/logout', options);
 
         const action = {
-            type: 'LOGIN',
-            payload: res.data
+            type: 'LOGOUT'
         }
 
         dispatch(action);
+
     }
 }

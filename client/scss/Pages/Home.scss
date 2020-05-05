@@ -1,15 +1,106 @@
 @import '../theme';
 @import '../utility';
 
-// @import "~antd/dist/antd.less";
+.home-item{
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
 
-.page-wrapper{
-    background-color: $light;
-    height: 100vh;
+    & p{
+        font-size: 1.25rem;
+        color: $light;
+        text-shadow: $text-shadow-slight;
+        font-weight: 500;
+    }
 }
 
-.home-content__wrapper{
-    height: 80vh;
+.item-section__wrapper{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    padding-top: 48px;
+}
+
+.home-item__text{
+    color: $light;
+    font-size: 2.5rem;
+    text-shadow: $text-shadow;
+}
+
+.home-item__svg{
+    max-width: 350px;
+    max-height: 350px;
+    min-width: 350px;
+    min-height: 350px;
+    padding-bottom: 32px;
+}
+
+li.ant-timeline-item{
+    height: 150px;
+
+    &.ant-timeline-item-last{
+        height: 30px;
+    }
+}
+
+div{
+    &.ant-timeline-item-content{
+        transform: scale(1.7);
+        font-weight: 500;
+        padding-left: 26px;
+        text-shadow: $text-shadow-slight;
+        color: rgba(0,0,0,0.55);
+        
+    }
+    &.ant-timeline-item-head{
+        transform: scale(1.7);
+        
+    }
+}
+
+.large-section__wrapper{
+    @include gradient-primary;
+}
+
+.medium-section__wrapper{
+    background-color: #fff;
+}
+
+.home-section__large{
+    flex-direction: column;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    & h1{
+        font-size: 4rem;
+        margin-top: -8rem;
+        color: $light;
+        text-shadow: $text-shadow;
+    }
+}
+
+.home-section__medium{
+    max-height: 50vh !important;
+    flex-direction: column;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    text-align: center;
+
+    & h1{
+        font-size: 4rem;
+        color: $primary-light;
+        text-shadow: $text-shadow-slight;
+    }
+}
+
+.container span.ant-statistic-content-value{
+    text-shadow: $text-shadow;
+    font-size: 5rem;
+    font-weight: 500;
+    text-align: center;
+    color: $light;
 }
 
 

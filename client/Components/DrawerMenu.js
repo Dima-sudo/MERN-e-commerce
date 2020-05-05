@@ -1,10 +1,9 @@
 import React from "react";
 import { Drawer, Menu } from "antd";
-import { SkinOutlined, MessageOutlined, MailOutlined } from "@ant-design/icons";
+import { BulbOutlined, MessageOutlined, MailOutlined, ConsoleSqlOutlined } from "@ant-design/icons";
 
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { v4 as uuidv } from 'uuid';
 
 import toggleDrawer from "../Redux/Actions/toggleDrawer";
 
@@ -22,13 +21,17 @@ class DrawerMenu extends React.Component {
           closable={true}
           visible={this.props.visible}
           onClose={this.onClose}
-          key={uuidv()}
+          key="drawer_menu"
         >
-          <Menu key={uuidv()}>
+          <Menu key="drawer_inner_menu">
               <Menu.ItemGroup title="Products">
             <Menu.Item key="products" onClick={this.onClose}>
-              <SkinOutlined />
-              <Link to="/products">Products</Link>
+              <BulbOutlined />
+              <Link to="/products">Explore</Link>
+            </Menu.Item>
+            <Menu.Item key="laptops" onClick={this.onClose}>
+              <ConsoleSqlOutlined />
+              <Link to="/products/laptops">Laptops</Link>
             </Menu.Item>
             </Menu.ItemGroup>
 
