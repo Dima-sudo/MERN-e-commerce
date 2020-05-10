@@ -1,7 +1,9 @@
 @import '../theme';
 @import '../utility';
 
-.form-spinner__positioning{
+.login-spinner__positioning{
+    min-height: 100%;
+    min-width: 100%;
     display: flex;
     justify-content: center;
 }

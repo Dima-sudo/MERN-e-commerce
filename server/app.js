@@ -16,14 +16,6 @@ const commentRoutes = require('./Routes/commentRoutes');
 
 const DB = require('./Utility/DB_Connect');
 
-// var bb = require('express-busboy');
-// bb.extend(app, {
-//     upload: true,
-//     path: '/path/to/save/files',
-//     allowedPath: /./
-// });
-
-//
 
 DB.connect();
 
@@ -36,15 +28,6 @@ app.use(cors());
 app.use(fileUpload({
     useTempFiles: true
 }))
-
-// // Cors
-// app.use((req, res, next) => {
-//     res.setHeader('Access-Control-Allow-Origin', '*');
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-//     res.setHeader('Access-Control-Allow-Headers', '*');
-    
-//     next();
-// })
 
 // Routes
 app.use('/products/comments', commentRoutes);

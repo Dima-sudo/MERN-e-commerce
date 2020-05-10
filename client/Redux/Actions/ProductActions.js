@@ -15,7 +15,7 @@ export const updateLaptop = (itemId, formData) => {
                 }
         }
 
-        const res = await axios.put(`http://localhost:8080/products/laptops/${itemId}/update`, formData, options)
+        const res = await axios.put(`${process.env.SERVER_URL}/products/laptops/${itemId}/update`, formData, options)
         console.log(res)
 
         if(res.data.status === 'success'){
@@ -38,7 +38,7 @@ export const deleteLaptop = (itemId) => {
                 }
         }
 
-        const res = await axios.delete(`http://localhost:8080/products/laptops/${itemId}/delete`, options)
+        const res = await axios.delete(`${process.env.SERVER_URL}/products/laptops/${itemId}/delete`, options)
         console.log(res)
 
         if(res.data.status === 'success'){
@@ -65,7 +65,7 @@ export const getListings = () => {
                 }
         }
 
-        const res = await axios.get('http://localhost:8080/products/getlistings', options);
+        const res = await axios.get(`${process.env.SERVER_URL}/products/getlistings`, options);
 
         const action = {
             type: 'USER_LISTINGS',
@@ -78,7 +78,7 @@ export const getListings = () => {
 
 export const getProducts = () => {
     return async (dispatch) => {
-        const res = await axios.get('http://localhost:8080/products/', {method: "GET"})
+        const res = await axios.get(`${process.env.SERVER_URL}/products/`, {method: "GET"})
         
         const action = {
             type: 'PRODUCT_LIST',
@@ -91,7 +91,7 @@ export const getProducts = () => {
 
 export const getLaptops = () => {
     return async (dispatch) => {
-        const res = await axios.get('http://localhost:8080/products/laptops', {method: "GET"})
+        const res = await axios.get(`${process.env.SERVER_URL}/products/laptops`, {method: "GET"})
         
         const action = {
             type: 'LAPTOP_LIST',
@@ -116,7 +116,7 @@ export const createLaptop = (formData) => {
                 }
         }
 
-        await axios.post('http://localhost:8080/products/laptops/create', formData, options);
+        await axios.post(`${process.env.SERVER_URL}/products/laptops/create`, formData, options);
 
         const alert = {
             message: "Your laptop listing was created",

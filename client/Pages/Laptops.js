@@ -2,8 +2,9 @@ import React, { Component } from "react";
 
 import { connect } from "react-redux";
 import { getLaptops } from "../Redux/Actions/ProductActions";
+import toggleFetching from "../Redux/Actions/toggleFetching";
 
-import { Row, Col } from "antd";
+import { Row, Col, Spin } from "antd";
 import ProductCard from "../Components/ProductCard";
 
 import { v4 as uuidv } from "uuid";
@@ -11,28 +12,20 @@ import { v4 as uuidv } from "uuid";
 import "../scss/Pages/Products.scss";
 
 class Laptops extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isFetching: true,
-    };
-  }
 
   async componentDidMount() {
-    await this.props.getLaptops();
+    this.props.toggleFetching()
+    await this.props.getLaptops();  
+    this.props.toggleFetching()
   }
 
   componentWillReceiveProps() {
-    this.setState({
-      isFetching: false,
-    });
-
     this.forceUpdate();
   }
 
   renderItems = () => {
-    if (this.state.isFetching === true) {
-      return <h2>Loading...</h2>;
+    if (this.props.isFetching === true || !this.props.Products) {
+      return <div className="product-spinner__positioning"><Spin size="large" /></div>;
     }
 
     return this.props.Products.map((product) => {
@@ -57,7 +50,7 @@ class Laptops extends Component {
 }
 
 const mapStateToProps = (store) => {
-  return { Products: store.Products.Laptops };
+  return { Products: store.Products.Laptops, isFetching: store.isFetching };
 };
 
-export default connect(mapStateToProps, { getLaptops })(Laptops);
+export default connect(mapStateToProps, { getLaptops, toggleFetching })(Laptops);

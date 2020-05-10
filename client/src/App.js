@@ -4,6 +4,8 @@ import {BrowserRouter} from 'react-router-dom';
 
 import Navbar from '../Components/Navbar';
 
+import UpdateComment from '../Components/UpdateForms/UpdateComment';
+import SignUp from '../Pages/SignUp';
 import CommentForm from '../Components/CommentForm';
 import LaptopForm from '../Components/UpdateForms/LaptopForm';
 import Laptops from '../Pages/Laptops';
@@ -20,7 +22,7 @@ import AutoAlert from '../Components/AutoAlert';
 import { connect } from 'react-redux';
 
 import { Layout } from 'antd';
-const { Content, Header, Footer} = Layout;
+const { Header } = Layout;
 
 import '../scss/App.scss';
 
@@ -38,12 +40,14 @@ class App extends Component{
                         <Navbar />
                     </Header>
 
-                    {/* <Content className="container"> */}
+                    {/* Every component should be wrapped in a Content tag */}
                         <Switch>
+                                <Route exact path="/products/:itemId/comments/:commentId/update" component={UpdateComment} />
                                 <Route exact path="/products/:itemId/comments/create" component={CommentForm} />
                                 <Route exact path="/products/laptops/:itemId/update" component={LaptopForm} />
                                 <Route exact path="/products/laptops" component={Laptops} />
                                 <Route exact path="/profile" component={Profile} />
+                                <Route exact path="/signup" component={SignUp} />
                                 <Route exact path="/login" component={Login} />
                                 <Route exact path="/products/create" component={CreateProduct} />
                                 <Route exact path="/products/:itemId" component={ProductPage} />
@@ -51,8 +55,6 @@ class App extends Component{
                                 <Route exact path="/about" component={About} />
                                 <Route exact path="/" component={Home} />
                         </Switch>
-                    {/* </Content> */}
-                        {/* <Footer>Footer Goes here</Footer> */}
                     </Layout>
 
                 </BrowserRouter>

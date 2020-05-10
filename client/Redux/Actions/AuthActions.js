@@ -1,5 +1,8 @@
 import axios from 'axios';
 import alertConfig from './AlertActions'
+import toggleFetching from './toggleFetching';
+
+import { message } from 'antd';
 
 
 export const login = (loginForm) => {
@@ -18,20 +21,28 @@ export const login = (loginForm) => {
 
                 console.log(res);
 
-                const action = {
-                    type: 'LOGIN',
-                    payload: res.data
+                if(res.data.status === 'failure'){
+                    message.error(`${res.data.message}`, 4);
+                    dispatch(toggleFetching());
                 }
-        
+                else if(res.data.status === 'success'){
+                    const action = {
+                        type: 'LOGIN',
+                        payload: res.data
+                    }
+            
+
+                    dispatch(action);
+    
+                    const alert = {
+                        message: "You have successfully logged in",
+                        type: "success"
+                    }
+
+                    dispatch(alertConfig(alert));
+                }
+
                 
-                dispatch(action);
-
-                const alert = {
-                    message: "You have successfully logged in",
-                    type: "success"
-                }
-
-                dispatch(alertConfig(alert));
     }
 }
 
@@ -53,6 +64,8 @@ export const logout = () => {
         const action = {
             type: 'LOGOUT'
         }
+
+        message.success("Successfully logged you out", 4);
 
         dispatch(action);
 

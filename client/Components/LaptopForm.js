@@ -25,15 +25,75 @@ class LaptopForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        title: '',
-        description: '',
-        price: '',
-        cpu: '',
-        graphics: '',
-        screen: '',
-        files: []
+      title: "",
+      description: "",
+      price: "",
+      cpu: "",
+      graphics: "",
+      screen: "",
+      files: [],
     };
   }
+
+  // Validate the form. Similar validation also exists on the serverside
+  isValidated = () => {
+    if (
+      this.state.title.length === 0 ||
+      this.state.description.length === 0 ||
+      this.state.price.length === 0 ||
+      this.state.cpu.length === 0 ||
+      this.state.graphics.length === 0 ||
+      this.state.screen.length === 0
+    ) {
+      message.error("Fields cannot be empty", 4);
+      return false;
+    } else if (this.state.title.length < 6 || !this.state.title.includes(" ")) {
+      message.error(
+        "Title has to be atleast 5 characters long and include the brand name and model",
+        6
+      );
+      return false;
+    } else if (
+      this.state.description.length < 6 ||
+      !this.state.description.includes(" ")
+    ) {
+      message.error(
+        "The description should be atleast 5 characters long and include a short description of the product",
+        8
+      );
+      return false;
+    } else if (+this.state.price <= 0) {
+      message.error("The price should be a positive integer", 4);
+      return false;
+    } else if (this.state.cpu.length < 6 || !this.state.cpu.includes(" ")) {
+      message.error(
+        "The CPU field should include the brand and model name of the processor",
+        6
+      );
+      return false;
+    } else if (
+      this.state.graphics.length < 6 ||
+      !this.state.graphics.includes(" ")
+    ) {
+      message.error(
+        "The graphics field should include the brand and model name of the card",
+        6
+      );
+      return false;
+    } else if (
+      this.state.screen.length < 6 ||
+      !this.state.screen.includes(" ") ||
+      !this.state.screen.includes(":")
+    ) {
+      message.error(
+        "The screen field should include the brand and model name, in addition to a resolution in the for mat of XXXX:YYYY i.e 1920:1080",
+        8
+      );
+      return false;
+    }
+
+    return true;
+  };
 
   renderUploadButton = () => {
     if (this.state.files.length > 3) {
@@ -50,8 +110,8 @@ class LaptopForm extends Component {
     );
   };
 
-   // Disables the submit button and shows a warning message when there's more than 3 items uploaded
-   renderSubmitButton = () => {
+  // Disables the submit button and shows a warning message when there's more than 3 items uploaded
+  renderSubmitButton = () => {
     if (this.state.files.length > 3) {
       return (
         <Button type="primary" disabled htmlType="submit">
@@ -67,7 +127,7 @@ class LaptopForm extends Component {
   };
 
   handleFile = (e) => {
-    this.setState({ files: e.fileList});
+    this.setState({ files: e.fileList });
     if (Array.isArray(e)) {
       return e;
     }
@@ -87,33 +147,48 @@ class LaptopForm extends Component {
 
   submitLaptop = () => {
 
-    const form = {
-      title: this.state.title,
-      description: this.state.description,
-      price: this.state.price,
-      cpu: this.state.cpu,
-      graphics: this.state.graphics,
-      screen: this.state.screen,
-    };
+    if(this.isValidated()){
 
-    const formData = new FormData();
+      let tags = [];
 
-    // Build formData
-    for (let key in form) {
-      formData.append(key, form[key]);
-    }
+      const form = {
+        title: this.state.title,
+        description: this.state.description,
+        price: this.state.price,
+        cpu: this.state.cpu,
+        graphics: this.state.graphics,
+        screen: this.state.screen,
+      };
 
-    // Files can't be received on the server as an array, have to append manually
-    this.state.files.forEach((file, i) => {
+      // After the form passes validation, tags are extracted from the form fields to be used in user searches.
+      Object.entries(form).forEach(e => {
+        tags = [...tags, ...e[1].split(' ')];
+      })
+
+      form.tags = tags;
+
+      console.log("form is");
+      console.log(form);
+
+      const formData = new FormData();
+
+      // Build formData
+      for (let key in form) {
+        formData.append(key, form[key]);
+      }
+
+      // Files can't be received on the server as an array, have to append manually
+      this.state.files.forEach((file, i) => {
         formData.append(`image-${i}`, file.originFileObj);
-    })
+      });
 
-    console.log("Laptop submitted");
-    // Redux action creator
-    this.props.createLaptop(formData);
+        // Redux action creator
+        this.props.createLaptop(formData);
 
-    // Passed from form CreateProduct component that manages all forms
-    this.props.setFormSubmitted();
+        // Passed from form CreateProduct component that manages all forms
+        this.props.setFormSubmitted();
+    }
+    
   };
 
   render() {
@@ -249,10 +324,7 @@ class LaptopForm extends Component {
               <Space size="small">
                 {/* Conditional rendering */}
                 {this.renderSubmitButton()}
-                <Button
-                  type="secondary"
-                  onClick={this.props.resetForm}
-                >
+                <Button type="secondary" onClick={this.props.resetForm}>
                   Back
                 </Button>
               </Space>

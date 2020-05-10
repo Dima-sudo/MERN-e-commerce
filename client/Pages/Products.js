@@ -2,8 +2,9 @@ import React, { Component } from "react";
 
 import { connect } from "react-redux";
 import { getProducts } from "../Redux/Actions/ProductActions";
+import toggleFetching from '../Redux/Actions/toggleFetching';
 
-import { Row, Col, Layout } from "antd";
+import { Row, Col, Layout, Spin } from "antd";
 import ProductCard from "../Components/ProductCard";
 
 const { Content } = Layout;
@@ -13,28 +14,20 @@ import { v4 as uuidv } from "uuid";
 import "../scss/Pages/Products.scss";
 
 class Products extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isFetching: true,
-    };
-  }
 
   async componentDidMount() {
+    this.props.toggleFetching();
     await this.props.getProducts();
+    this.props.toggleFetching();
   }
 
   componentWillReceiveProps() {
-    this.setState({
-      isFetching: false,
-    });
-
     this.forceUpdate();
   }
 
   renderItems = () => {
-    if (this.state.isFetching === true) {
-      return <h2>Loading...</h2>;
+    if (this.props.isFetching || !this.props.Products) {
+      return <div className="product-spinner__positioning"><Spin size="large" /></div>
     }
 
     return this.props.Products.map((product) => {
@@ -62,7 +55,7 @@ class Products extends Component {
 }
 
 const mapStateToProps = (store) => {
-  return { Products: store.Products.AllProducts };
+  return { Products: store.Products.AllProducts, isFetching: store.isFetching };
 };
 
-export default connect(mapStateToProps, { getProducts })(Products);
+export default connect(mapStateToProps, { getProducts, toggleFetching })(Products);

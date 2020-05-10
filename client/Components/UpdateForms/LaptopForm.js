@@ -24,8 +24,68 @@ class LaptopForm extends Component {
     };
   }
 
+   // Validate the form. Similar validation also exists on the serverside
+   isValidated = () => {
+    if (
+      this.state.title.length === 0 ||
+      this.state.description.length === 0 ||
+      this.state.price.length === 0 ||
+      this.state.cpu.length === 0 ||
+      this.state.graphics.length === 0 ||
+      this.state.screen.length === 0
+    ) {
+      message.error("Fields cannot be empty", 4);
+      return false;
+    } else if (this.state.title.length < 6 || !this.state.title.includes(" ")) {
+      message.error(
+        "Title has to be atleast 5 characters long and include the brand name and model",
+        6
+      );
+      return false;
+    } else if (
+      this.state.description.length < 6 ||
+      !this.state.description.includes(" ")
+    ) {
+      message.error(
+        "The description should be atleast 5 characters long and include a short description of the product",
+        8
+      );
+      return false;
+    } else if (+this.state.price <= 0) {
+      message.error("The price should be a positive integer", 4);
+      return false;
+    } else if (this.state.cpu.length < 6 || !this.state.cpu.includes(" ")) {
+      message.error(
+        "The CPU field should include the brand and model name of the processor",
+        6
+      );
+      return false;
+    } else if (
+      this.state.graphics.length < 6 ||
+      !this.state.graphics.includes(" ")
+    ) {
+      message.error(
+        "The graphics field should include the brand and model name of the card",
+        6
+      );
+      return false;
+    } else if (
+      this.state.screen.length < 6 ||
+      !this.state.screen.includes(" ") ||
+      !this.state.screen.includes(":")
+    ) {
+      message.error(
+        "The screen field should include the brand and model name, in addition to a resolution in the for mat of XXXX:YYYY i.e 1920:1080",
+        8
+      );
+      return false;
+    }
+
+    return true;
+  };
+
   renderUploadButton = () => {
-    if (this.state.files.length > 3) {
+    if (this.state.files.length > 2) {
       return (
         <Button disabled>
           <UploadOutlined /> Upload
@@ -44,7 +104,9 @@ class LaptopForm extends Component {
     if (this.state.files.length > 4) {
       return (
         <Button type="primary" disabled htmlType="submit">
+          <Link to="/profile">
           Update
+          </Link>
         </Button>
       );
     }
@@ -75,30 +137,44 @@ class LaptopForm extends Component {
   };
 
   submitLaptop = () => {
-    const form = {
-      title: this.state.title,
-      description: this.state.description,
-      price: this.state.price,
-      cpu: this.state.cpu,
-      graphics: this.state.graphics,
-      screen: this.state.screen,
-    };
 
-    const formData = new FormData();
+    if(this.isValidated()){
 
-    // Build formData
-    for (let key in form) {
-      formData.append(key, form[key]);
+      let tags = [];
+
+      const form = {
+        title: this.state.title,
+        description: this.state.description,
+        price: this.state.price,
+        cpu: this.state.cpu,
+        graphics: this.state.graphics,
+        screen: this.state.screen,
+      };
+
+
+      // After the form passes validation, tags are extracted from the form fields to be used in user searches.
+      Object.entries(form).forEach(e => {
+        tags = [...tags, ...e[1].split(' ')];
+      })
+
+      form.tags = tags;
+
+      const formData = new FormData();
+
+      // Build formData
+      for (let key in form) {
+        formData.append(key, form[key]);
+      }
+
+      // Files can't be received on the server as an array, have to append manually
+      this.state.files.forEach((file, i) => {
+        formData.append(`image-${i}`, file.originFileObj);
+      });
+
+        // Redux action creator
+      const itemId = this.props.location.self._id;
+      this.props.updateLaptop(itemId, formData);
     }
-
-    // Files can't be received on the server as an array, have to append manually
-    this.state.files.forEach((file, i) => {
-      formData.append(`image-${i}`, file.originFileObj);
-    });
-
-    // Redux action creator
-    const itemId = this.props.location.self._id;
-    this.props.updateLaptop(itemId, formData);
   };
 
   render() {
@@ -238,11 +314,10 @@ class LaptopForm extends Component {
                 {/* Conditional rendering */}
                 {this.renderSubmitButton()}
                 <Button
-                  onClick={() => {
-                    return <Redirect to="/profile" />;
-                  }}
                 >
+                  <Link to="/profile">
                   Back
+                  </Link>
                 </Button>
               </Space>
             </Form.Item>

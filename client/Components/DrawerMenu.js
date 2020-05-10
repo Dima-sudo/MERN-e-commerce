@@ -7,6 +7,8 @@ import { Link } from "react-router-dom";
 
 import toggleDrawer from "../Redux/Actions/toggleDrawer";
 
+const { SubMenu } = Menu;
+
 class DrawerMenu extends React.Component {
   onClose = () => {
     this.props.toggleDrawer();
@@ -23,8 +25,8 @@ class DrawerMenu extends React.Component {
           onClose={this.onClose}
           key="drawer_menu"
         >
-          <Menu key="drawer_inner_menu">
-              <Menu.ItemGroup title="Products">
+          <Menu key="drawer_inner_menu" mode="inline">
+              <SubMenu title="Products">
             <Menu.Item key="products" onClick={this.onClose}>
               <BulbOutlined />
               <Link to="/products">Explore</Link>
@@ -33,7 +35,7 @@ class DrawerMenu extends React.Component {
               <ConsoleSqlOutlined />
               <Link to="/products/laptops">Laptops</Link>
             </Menu.Item>
-            </Menu.ItemGroup>
+            </SubMenu>
 
 
             <Menu.Item key="about" onClick={this.onClose}>

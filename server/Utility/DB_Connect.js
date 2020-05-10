@@ -6,12 +6,12 @@ exports.connect = () => {
   mongoose
     .connect(process.env.DB_HOST, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
     })
     .then(() => {
       console.log(`Connection to DB Successful.`);
     })
-    .catch(err => {
+    .catch((err) => {
       console.log("Error connecting to DB.");
       console.log(err);
     });

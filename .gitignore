@@ -2,4 +2,9 @@ node_modules/
 
 # ignore all logs
 *.log
+
+# ignore environment
 .env
+
+# Webpack
+dist

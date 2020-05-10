@@ -34,7 +34,9 @@ class Login extends Component {
       return <Redirect to="/" />;
     } else if (this.props.isFetching === true) {
       return (
-        <Spin size="large" className="my-5 py-5 form-spinner__positioning" />
+        <span className="login-spinner__positioning">
+        <Spin size="large" className="my-5 py-5" />
+        </span>
       );
     } else if (this.props.isLoggedIn === null) {
       return (
@@ -100,7 +102,7 @@ class Login extends Component {
     }
   };
 
-  submitForm = () => {
+  submitForm = async () => {
     const form = {
       email: this.state.email,
       password: this.state.password,
@@ -108,7 +110,7 @@ class Login extends Component {
 
     // isFetching is used for conditional rendering
     this.props.toggleFetching();
-    this.props.login(form);
+    await this.props.login(form);
   };
 
   handleChange = (e) => {

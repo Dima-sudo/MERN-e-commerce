@@ -10,14 +10,45 @@ import { Empty } from "antd";
 
 import { v4 as uuid } from "uuid";
 
-import { Row, Col, Card, Button, Breadcrumb, Tabs, Timeline, Layout } from "antd";
+import { Redirect } from 'react-router-dom';
+
+import { Row, Col, Card, Button, Breadcrumb, Tabs, Layout } from "antd";
 
 const { TabPane } = Tabs;
 const { Content } = Layout;
 
 import { HomeOutlined, UserOutlined } from "@ant-design/icons";
 
+import CustomModal from '../Components/CustomModal';
+
+import axios from 'axios';
+
+import SetModal from '../Redux/Actions/ModalActions';
+
+
 class Profile extends Component {
+
+  popConfirmDeactivate = () => {
+    this.props.SetModal({
+      title: 'Confirm Account Deactivation',
+      text: 'Sorry to see you go. Are you sure you want to delete this account?',
+      visible: true
+    })
+  }
+
+  deactivateAccount = async () => {
+  
+      const options = {
+        headers: {
+          'Authorization': `Bearer ${this.props.isLoggedIn.token}`
+        }
+      }
+
+     const res = await axios.delete(`${process.env.SERVER_URL}/auth/deactivate`, options);
+
+     return res;
+  }
+
   componentWillReceiveProps() {
     this.forceUpdate();
   }
@@ -35,7 +66,9 @@ class Profile extends Component {
       return list.map((item) => {
         let image = null;
         // Formatting
-        let date = item.created.split("T")[0];
+        let unformattedDate = item.created.split("T")[0].split('-');
+        let date = `${unformattedDate[2]}/${unformattedDate[1]}/${unformattedDate[0]}`;
+        //
 
         // If an image exists get the url. The component knows how to handle cases with no image
         if (item.images.length > 0) image = item.images[0].url;
@@ -61,40 +94,9 @@ class Profile extends Component {
     this.props.getListings();
   }
 
-  renderTimeline = () => {
-    return (
-      <Timeline className="mt-3 ml-4">
-        <Timeline.Item color="green">
-          Create a services site 2020-09-01
-        </Timeline.Item>
-        <Timeline.Item color="green">
-          Create a services site 2020-09-01
-        </Timeline.Item>
-        <Timeline.Item color="red">
-          <p>Solve initial network problems 1</p>
-          <p>Solve initial network problems 2</p>
-          <p>Solve initial network problems 3 2020-09-01</p>
-        </Timeline.Item>
-        <Timeline.Item>
-          <p>Technical testing 1</p>
-          <p>Technical testing 2</p>
-          <p>Technical testing 3 2020-09-01</p>
-        </Timeline.Item>
-        <Timeline.Item color="gray">
-          <p>Technical testing 1</p>
-          <p>Technical testing 2</p>
-          <p>Technical testing 3 2020-09-01</p>
-        </Timeline.Item>
-        <Timeline.Item color="gray">
-          <p>Technical testing 1</p>
-          <p>Technical testing 2</p>
-          <p>Technical testing 3 2020-09-01</p>
-        </Timeline.Item>
-      </Timeline>
-    );
-  };
-
   renderBreadcrumb = () => {
+    const name = this.props.isLoggedIn.email.split('@')[0][0].toUpperCase() + this.props.isLoggedIn.email.split('@')[0].slice(1);
+
     return (
       <Breadcrumb>
         <Breadcrumb.Item href="">
@@ -102,7 +104,7 @@ class Profile extends Component {
         </Breadcrumb.Item>
         <Breadcrumb.Item href="">
           <UserOutlined />
-          <span>User</span>
+          <span>{name}</span>
         </Breadcrumb.Item>
         <Breadcrumb.Item>Profile</Breadcrumb.Item>
       </Breadcrumb>
@@ -111,7 +113,12 @@ class Profile extends Component {
 
   render() {
     return (
+      !this.props.isLoggedIn ? <Redirect to="/login" /> 
+      :
       <Content className="container">
+
+        <CustomModal action={this.deactivateAccount} />
+
         <Card title={this.renderBreadcrumb()} className="user-panel mt-5">
           <Button
             shape="round"
@@ -119,6 +126,7 @@ class Profile extends Component {
             type="primary"
             size="large"
             danger
+            onClick={this.popConfirmDeactivate}
           >
             Deactivate Account
           </Button>
@@ -134,13 +142,6 @@ class Profile extends Component {
 
         <Card className="mt-5">
           <Tabs>
-            {/* <TabPane tab="My Activity" key="activity-tab-key">
-              <Row>
-                <Col xs={24} md={24} lg={24}>
-                  {this.renderTimeline()}
-                </Col>
-              </Row>
-            </TabPane> */}
 
             <TabPane tab="My Listings" key="history-tab-key">
               <Row>
@@ -166,8 +167,8 @@ class Profile extends Component {
 
 const mapStateToProps = (store) => {
   return {
-    UserListings: store.Products.UserListings,
+    UserListings: store.Products.UserListings, isLoggedIn: store.isLoggedIn
   };
 };
 
-export default connect(mapStateToProps, { getListings })(Profile);
+export default connect(mapStateToProps, { getListings, SetModal })(Profile);

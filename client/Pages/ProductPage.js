@@ -10,23 +10,28 @@ import {
   Comment,
   Empty,
   Button,
+  message
 } from "antd";
 
 const { Content } = Layout;
 
-import { Row, Col } from "antd";
+import { Row, Col, notification } from "antd";
 
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 
 import { connect } from "react-redux";
 
-import { CheckCircleOutlined } from "@ant-design/icons";
+import { CheckCircleOutlined, SmileOutlined } from "@ant-design/icons";
 
 import axios from 'axios';
+
+import { getProducts } from '../Redux/Actions/ProductActions';
 
 import "../scss/Pages/ProductPage.scss";
 
 import { v4 as uuidv } from "uuid";
+
+import alertConfig from '../Redux/Actions/AlertActions';
 
 // Stripe
 import StripeCheckout from 'react-stripe-checkout';
@@ -41,10 +46,42 @@ class ProductPage extends Component {
 
     this.state = {
       keyValuePairs: [],
+      hasPurchased: false,
+      hasUpdated: false,
     };
   }
 
-  handleToken = (token) => {
+  shouldComponentUpdate(nextState, nextProps){
+    if(this.props.Products !== nextProps.Products) return true;
+  }
+
+  deleteComment = (commentId) => {
+    return async () => {
+      const productId = this.props.history.location.self._id;
+    
+      const options = {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.props.isLoggedIn.token}`
+        }
+      }
+
+      const res = await axios.delete(`${process.env.SERVER_URL}/products/comments/${productId}/${commentId}/delete`, options);
+
+      if(res.data.status === 'success'){
+        message.success("The comment was removed", 4);
+        this.props.getProducts();
+        this.setState({
+          hasUpdated: true
+        })
+      }
+      else if(res.data.status === 'failure'){
+        message.warning("Couldn't remove comment, try again in a bit", 4);
+      }
+    }
+  }
+
+  handleToken = async (token) => {
     console.log(token);
     const self = this.props.history.location.self
 
@@ -58,7 +95,29 @@ class ProductPage extends Component {
       }
     }
 
-    axios.post(`${process.env.SERVER_URL}/products/${self._id}/checkout`, token, options);
+    // Notification that dissapears after a few seconds
+    notification.open({
+      message: 'Working on it',
+      description:
+        'Thanks for making this purchase. We\'re working on your request and you should receive a confirmation notification in just a moment',
+      icon: <SmileOutlined style={{ color: '#108ee9' }} />,
+    });
+
+    const res = await axios.post(`${process.env.SERVER_URL}/products/${self._id}/checkout`, token, options);
+
+    if(res.data.status === 'success'){
+      const alert = {
+        message: "Your purchase was completed successfully",
+        type: "success"
+    }
+
+    this.props.alertConfig(alert);
+    this.setState({hasPurchased: true})
+    }
+    
+    else if(res.data.status === 'failure'){
+      message.warning('Whoops! there was a problem with that purchase. Try again in a bit.', 4);
+    }
 
   }
 
@@ -91,6 +150,7 @@ class ProductPage extends Component {
       // Obj.entries extracts all key value pairs which are then filtered
       const self = this.props.history.location.self;
 
+      // Remove fields that the user isn't supposed to see
       tableData = Object.entries(self).filter((e) => {
         return (
           e[0] !== "tags" &&
@@ -170,30 +230,40 @@ class ProductPage extends Component {
     const comments = this.props.history.location.self.comments;
 
     if (comments.length > 0) {
-      const actions = [
-        <React.Fragment>
-          <Button className="mr-2" size="small" type="secondary" shape="round">
-            Edit
-          </Button>
-          ,
-          <Button size="small" danger shape="round">
-            Delete
-          </Button>
-        </React.Fragment>,
-      ];
 
       return comments.map((comment) => {
         // Extract username from email and add formatting for comment display
+
         const createdBy =
           comment.createdBy.email.split("@")[0].charAt(0).toUpperCase() +
           comment.createdBy.email.split("@")[0].slice(1);
 
         if (this.props.isLoggedIn !== null) {
-          if (this.props.isLoggedIn.email) {
+          if (this.props.isLoggedIn.email === comment.createdBy.email) {
+
+            const productId = this.props.history.location.self._id;
+            const commentId = comment._id;
+
             return (
               <Comment
                 key={uuidv()}
-                actions={actions}
+                actions={[
+                  <React.Fragment>
+                    <Button className="mr-2" size="small" type="secondary" shape="round">
+                      <Link to={{
+                        pathname: `/products/${productId}/comments/${commentId}/update`,
+                        self: this.props.history.location.self,
+                        comment
+                      }}>
+                      Edit
+                      </ Link>
+                    </Button>
+                    ,
+                    <Button onClick={this.deleteComment(comment._id)} size="small" danger shape="round">
+                      Delete
+                    </Button>
+                  </React.Fragment>,
+                ]}
                 author={createdBy}
                 content={comment.content}
               />
@@ -214,6 +284,8 @@ class ProductPage extends Component {
     const self = this.props.history.location.self;
 
     return (
+      this.state.hasPurchased === true || this.state.hasUpdated === true ? <Redirect to="/profile" />
+      :
       <Content className="container">
         <Card
           className="my-5 py-2"
@@ -236,6 +308,7 @@ class ProductPage extends Component {
         <Card
           title="Comment Section"
           extra={
+            this.props.isLoggedIn ?
             <Button size="medium" type="primary" shape="round">
               <Link
                 to={{ pathname: `/products/${self._id}/comments/create`, self }}
@@ -243,6 +316,8 @@ class ProductPage extends Component {
                 New
               </Link>
             </Button>
+            :
+            null
           }
         >
           {this.renderComments()}
@@ -254,8 +329,8 @@ class ProductPage extends Component {
 
 const mapStateToProps = (store) => {
   return {
-    isLoggedIn: store.isLoggedIn,
+    isLoggedIn: store.isLoggedIn, Products: store.Products
   };
 };
 
-export default connect(mapStateToProps)(ProductPage);
+export default connect(mapStateToProps, { alertConfig, getProducts })(ProductPage);

@@ -21,6 +21,7 @@ export const CreateComment = (content, itemId) => {
 
         if(res.data.status === 'success'){
             message.success('Your comment was created', 4);
+            dispatch(getProducts());
         }
         else if(res.data.status === 'failure'){
             message.warning('Whoops! There was a problem creating the comment, working on it', 4);

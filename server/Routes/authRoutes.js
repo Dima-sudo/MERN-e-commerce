@@ -8,6 +8,8 @@ const validators = require('../Utility/Validators');
 const isLoggedIn = authController.isAuthenticated;
 const validateSignup = validators.validate_Account_Creation_Form;
 
+
+router.delete('/deactivate', isLoggedIn, authController.deactivate);
 router.post('/signup', validateSignup, authController.signUp);
 router.post('/login', authController.login);
 router.get('/logout', isLoggedIn, authController.logout);

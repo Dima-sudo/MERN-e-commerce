@@ -9,10 +9,8 @@ const Comment = require('../Models/Comment');
 
 // Middleware
 const isLoggedIn = authController.isAuthenticated;
-const validateForm = validators.validate_Laptop_Creation_Form;
 const isOwner = authController.isOwner;
 
-// #TODO Add comment ownership to isOwner
 
 router.post('/:itemId/create', isLoggedIn, commentController.create);
 router.delete('/:itemId/:commentId/delete', isLoggedIn, isOwner(Comment), commentController.delete);
