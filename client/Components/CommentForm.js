@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { Form, Input, Button, Card, Space, Layout} from "antd";
+import { Form, Input, Button, Card, Space, Layout, message } from "antd";
 
 const { Content } = Layout;
 
@@ -11,12 +11,30 @@ import "../scss/Pages/CreateProduct.scss";
 import { connect } from "react-redux";
 import { CreateComment } from "../Redux/Actions/CommentActions";
 
+import axios from "axios";
+
 class CommentForm extends Component {
   constructor(props) {
     super(props);
+
+    let comment = null;
+
+    // If updating
+    if (this.props.location.self && this.props.location.comment) {
+      comment = {
+        content: this.props.location.comment.content,
+      };
+    }
+    // Else create a new comment
+    else {
+      comment = {
+        content: "",
+      };
+    }
+
     this.state = {
-      content: "",
-      didSubmit: false,
+      content: comment.content,
+      hasSubmitted: false,
     };
   }
 
@@ -31,27 +49,54 @@ class CommentForm extends Component {
     });
   };
 
-  submitComment = () => {
-
+  submitComment = async () => {
     const itemId = this.props.location.self._id;
+
+    console.log("Comment submitted");
 
     const content = {
       content: this.state.content,
     };
 
-    console.log("Comment submitted");
+    const options = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.props.isLoggedIn.token}`,
+      },
+    };
 
-    // Redux action creator
-    this.setState({ didSubmit: true });
-    this.props.CreateComment(content, itemId);
+    // If updating
+    if (this.props.location.self && this.props.location.comment) {
+      const productId = this.props.location.self._id;
+      const commentId = this.props.location.comment._id;
 
+      const res = await axios.put(
+        `${process.env.SERVER_URL}/products/comments/${productId}/${commentId}/update`,
+        content,
+        options
+      );
+
+      if (res.data.status === "success") {
+        message.success("The comment was updated", 4);
+        this.setState({ hasSubmitted: true });
+      } else if (res.data.status === "failure") {
+        message.warning("There was an error trying to update the comment", 4);
+      }
+    }
+
+    // Else if a new comment
+    else {
+      // Redux action creator
+      this.setState({ hasSubmitted: true });
+      this.props.CreateComment(content, itemId);
+    }
   };
 
   render() {
-    return this.state.didSubmit === true ? (
+    return this.state.hasSubmitted === true ? (
       <Redirect to="/products" />
     ) : (
-          <Content className="container">
+      <Content className="container">
         <Card title="Create Comment" className="my-5">
           <Form
             size="middle"
@@ -91,9 +136,13 @@ class CommentForm extends Component {
             </Form.Item>
           </Form>
         </Card>
-        </Content>
+      </Content>
     );
   }
 }
 
-export default connect(null, { CreateComment })(CommentForm);
+const mapStateToProps = (store) => {
+  return { isLoggedIn: store.isLoggedIn };
+};
+
+export default connect(mapStateToProps, { CreateComment })(CommentForm);

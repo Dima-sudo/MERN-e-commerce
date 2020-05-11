@@ -4,36 +4,92 @@ import {
   Form,
   Input,
   Button,
-  Select,
   Layout,
   Card,
   Space,
   Upload,
   message,
+  Breadcrumb,
 } from "antd";
-import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
-import { Redirect } from "react-router-dom";
+import {
+  UploadOutlined,
+  LaptopOutlined,
+  HomeOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+
+import { Redirect, Link } from "react-router-dom";
 
 import "../scss/Pages/CreateProduct.scss";
 
 const { Content } = Layout;
 
 import { connect } from "react-redux";
-import { createLaptop } from "../Redux/Actions/ProductActions";
+import { createLaptop, updateLaptop } from "../Redux/Actions/ProductActions";
+
+import { getTags } from "../Utility/Forms";
 
 class LaptopForm extends Component {
   constructor(props) {
     super(props);
+
+    let self = null;
+
+    // If in update mode, and an existing product is passed, prefill the form with passed product's information.
+    if (this.props.location.self) {
+      self = this.props.location.self;
+    }
+    // Else show a creation form with empty fields.
+    else {
+      self = {
+        title: "",
+        description: "",
+        price: "",
+        cpu: "",
+        graphics: "",
+        screen: "",
+      };
+    }
+
     this.state = {
-      title: "",
-      description: "",
-      price: "",
-      cpu: "",
-      graphics: "",
-      screen: "",
+      title: self.title,
+      description: self.description,
+      price: self.price,
+      cpu: self.cpu,
+      graphics: self.graphics,
+      screen: self.screen,
       files: [],
+      hasSubmitted: false,
     };
   }
+
+  renderBreadcrumb = () => {
+    let name = null;
+
+    if (this.props.isLoggedIn) {
+      name =
+        this.props.isLoggedIn.email.split("@")[0][0].toUpperCase() +
+        this.props.isLoggedIn.email.split("@")[0].slice(1);
+    }
+
+    return (
+      <Breadcrumb>
+        <Breadcrumb.Item href="">
+          <HomeOutlined />
+        </Breadcrumb.Item>
+        <Breadcrumb.Item href="">
+          <UserOutlined />
+          <span>{name}</span>
+        </Breadcrumb.Item>
+        <Breadcrumb.Item href="">
+          <Space>
+            <LaptopOutlined />
+            Laptops
+          </Space>
+        </Breadcrumb.Item>
+      </Breadcrumb>
+    );
+  };
 
   // Validate the form. Similar validation also exists on the serverside
   isValidated = () => {
@@ -62,7 +118,7 @@ class LaptopForm extends Component {
         8
       );
       return false;
-    } else if (+this.state.price <= 0) {
+    } else if (+this.state.price <= 0 || typeof this.state.price !== "number") {
       message.error("The price should be a positive integer", 4);
       return false;
     } else if (this.state.cpu.length < 6 || !this.state.cpu.includes(" ")) {
@@ -96,7 +152,7 @@ class LaptopForm extends Component {
   };
 
   renderUploadButton = () => {
-    if (this.state.files.length > 3) {
+    if (this.state.files.length > 2) {
       return (
         <Button disabled>
           <UploadOutlined /> Upload
@@ -146,11 +202,7 @@ class LaptopForm extends Component {
   };
 
   submitLaptop = () => {
-
-    if(this.isValidated()){
-
-      let tags = [];
-
+    if (this.isValidated()) {
       const form = {
         title: this.state.title,
         description: this.state.description,
@@ -160,15 +212,7 @@ class LaptopForm extends Component {
         screen: this.state.screen,
       };
 
-      // After the form passes validation, tags are extracted from the form fields to be used in user searches.
-      Object.entries(form).forEach(e => {
-        tags = [...tags, ...e[1].split(' ')];
-      })
-
-      form.tags = tags;
-
-      console.log("form is");
-      console.log(form);
+      form.tags = getTags(form);
 
       const formData = new FormData();
 
@@ -182,19 +226,30 @@ class LaptopForm extends Component {
         formData.append(`image-${i}`, file.originFileObj);
       });
 
+      // If in update mode
+      if (this.props.location.self) {
+        // Redux action creator
+        const itemId = this.props.location.self._id;
+        this.props.updateLaptop(itemId, formData);
+
+        this.setState({ hasSubmitted: true });
+      }
+      // Else create a new product
+      else {
         // Redux action creator
         this.props.createLaptop(formData);
-
         // Passed from form CreateProduct component that manages all forms
         this.props.setFormSubmitted();
+      }
     }
-    
   };
 
   render() {
-    return (
-      <div>
-        <Card title="Create Product" className="my-5">
+    return this.state.hasSubmitted === true ? (
+      <Redirect to="/profile" />
+    ) : (
+      <Content className="container">
+        <Card title={this.renderBreadcrumb()} className="my-5">
           <Form
             size="middle"
             name="create_form"
@@ -325,15 +380,21 @@ class LaptopForm extends Component {
                 {/* Conditional rendering */}
                 {this.renderSubmitButton()}
                 <Button type="secondary" onClick={this.props.resetForm}>
-                  Back
+                  <Link to="/profile">Back</Link>
                 </Button>
               </Space>
             </Form.Item>
           </Form>
         </Card>
-      </div>
+      </Content>
     );
   }
 }
 
-export default connect(null, { createLaptop })(LaptopForm);
+const mapStateToProps = (store) => {
+  return { isLoggedIn: store.isLoggedIn };
+};
+
+export default connect(mapStateToProps, { createLaptop, updateLaptop })(
+  LaptopForm
+);

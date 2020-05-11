@@ -128,38 +128,6 @@ exports.validate_Laptop_Creation_Form = async (req, res, next) => {
       status: "failure",
     });
 
-  // // Check that if tags are passed, are in proper format
-  // if (form.tags) {
-  //   console.log(typeof form.tags);
-  //   if (!Array.isArray(form.tags)) {
-  //     return res
-  //       .status(400)
-  //       .json({
-  //         message: "Tags are not passed in proper format",
-  //         error: "Not a String array",
-  //         status: "failure",
-  //       });
-  //   }
-  // }
-
-  // Check for potential duplicates
-  try {
-    const alreadyExists = await Laptop.findOne({ title: req.body.title });
-    if (alreadyExists)
-      return res.status(400).json({
-        message: "This laptop already exists",
-        error: "Duplicate",
-        status: "failure",
-      });
-  } catch (err) {
-    console.log(err.message);
-    return res.status(500).json({
-      message: "Error during duplicate check",
-      error: err,
-      status: "failure",
-    });
-  }
-
   next();
   //
 };
@@ -228,7 +196,8 @@ exports.validate_Television_Creation_Form = async (req, res, next) => {
       error: "Invalid screen",
       status: "failure",
     });
-
+  
+  // #TODO redo this section because of change in how tags are constructed
   // Check that if tags are passed, are in proper format
   if (form.tags) {
     if (!Array.isArray(form.tags)) {
@@ -240,24 +209,6 @@ exports.validate_Television_Creation_Form = async (req, res, next) => {
           status: "failure",
         });
     }
-  }
-
-  // Check for potential duplicates
-  try {
-    const alreadyExists = await Television.findOne({ title: req.body.title });
-    if (alreadyExists)
-      return res.status(400).json({
-        message: "This tv already exists",
-        error: "Duplicate",
-        status: "failure",
-      });
-  } catch (err) {
-    console.log(err.message);
-    return res.status(500).json({
-      message: "Error during duplicate check",
-      error: err,
-      status: "failure",
-    });
   }
 
   next();

@@ -34,3 +34,9 @@ td a {
       min-height: 200px;
       height: 200px !important;
   }
+
+  @media screen and (max-width: 764px){
+      .ant-carousel{
+          margin-bottom: 2rem;
+      }
+  }

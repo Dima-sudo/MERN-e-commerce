@@ -16,22 +16,46 @@ class HistoryItem extends Component {
   handleEdit = () => {
     const itemId = this.props.self._id;
 
-    if(this.props.self.itemtype === 'Laptop'){
-      console.log("this.props.self is")
-      console.log(this.props.self)
-      // This object is fed into the Link on render
-      return {
-        pathname: `/products/laptops/${itemId}/update`,
-        self: this.props.self 
-      }
-    }
+    switch(this.props.self.itemtype){
+      case 'Laptop':
+        return {
+          pathname: `/products/laptops/${itemId}/update`,
+          self: this.props.self 
+        }
 
-    console.log("HandleEdit: No cases matched");
+      default:
+        console.log("HistoryItem: HandleEdit: Default case shouldn't be reachable");
+        break;
+    }
+    
+    
+    // if(this.props.self.itemtype === 'Laptop'){
+    //   console.log("this.props.self is")
+    //   console.log(this.props.self)
+    //   // This object is fed into the Link on render
+    //   return {
+    //     pathname: `/products/laptops/${itemId}/update`,
+    //     self: this.props.self 
+    //   }
+    // }
+
+    // // Shouldn't be reachable
+    // console.log("HistoryItem: HandleEdit: No cases matched");
   }
 
   handleDelete = () => {
     const itemId = this.props.self._id;
-    this.props.deleteLaptop(itemId);
+
+    switch(this.props.self.itemtype){
+      case 'Laptop':
+        this.props.deleteLaptop(itemId);
+        break;
+
+      default:
+        console.log("HistoryItem: HandleDelete: Default case shouldn't be reachable");
+        break;
+    }
+
   }
 
   renderImage = () => {
@@ -60,7 +84,7 @@ class HistoryItem extends Component {
             </h3>
             <h3 id="price">
               <span className="history-text__light">Priced at </span>
-              {this.props.price}
+              {this.props.price} ILS
             </h3>
           </span>
           <p>{this.props.description.slice(0, 50).trim()}...</p>

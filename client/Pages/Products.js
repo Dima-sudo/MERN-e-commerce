@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
-import { getProducts } from "../Redux/Actions/ProductActions";
+import { getProducts, getLaptops } from "../Redux/Actions/ProductActions";
 import toggleFetching from '../Redux/Actions/toggleFetching';
 
 import { Row, Col, Layout, Spin } from "antd";
@@ -13,11 +13,41 @@ import { v4 as uuidv } from "uuid";
 
 import "../scss/Pages/Products.scss";
 
+/**
+ * @class - This page is responsible for rendering any category of products. Fetch request and rendering for the relevant
+ * category will be made according the passed props.
+ * 
+ * @param {string} type - should be passed as props to indicate the category of products that should be rendered on the page.
+ */
+
+// mapStateToProps is defined outside the class, this is used to access to pass the type props.
+let type = null;
+
 class Products extends Component {
 
+  constructor(props){
+    super(props);
+
+    type = this.props.type;
+  }
+
   async componentDidMount() {
+    // toggleFetching is used for loading s
     this.props.toggleFetching();
-    await this.props.getProducts();
+
+    switch(this.props.type){
+      case 'products':
+        await this.props.getProducts();
+        break;
+      case 'laptops':
+        await this.props.getLaptops();
+        break;
+
+      default: 
+        await this.props.getProducts();
+        break;
+    }
+    
     this.props.toggleFetching();
   }
 
@@ -55,7 +85,17 @@ class Products extends Component {
 }
 
 const mapStateToProps = (store) => {
-  return { Products: store.Products.AllProducts, isFetching: store.isFetching };
+  
+  switch(type){
+    case 'products':
+      return { Products: store.Products.AllProducts, isFetching: store.isFetching };
+    case 'laptops':
+      return { Products: store.Products.Laptops, isFetching: store.isFetching };
+
+    default: 
+    return { Products: store.Products.AllProducts, isFetching: store.isFetching };
+  }
+  
 };
 
-export default connect(mapStateToProps, { getProducts, toggleFetching })(Products);
+export default connect(mapStateToProps, { getProducts, getLaptops, toggleFetching })(Products);
