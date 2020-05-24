@@ -7,55 +7,46 @@ import { Link } from "react-router-dom";
 
 import toggleDrawer from "../Redux/Actions/toggleDrawer";
 
+import '../scss/Components/SideMenu.scss';
+
 const { SubMenu } = Menu;
 
-class DrawerMenu extends React.Component {
-  onClose = () => {
-    this.props.toggleDrawer();
-  };
+class SideMenu extends React.Component {
 
   render() {
     return (
-      <div>
-        <Drawer
-          title="Menu"
-          placement="left"
-          closable={true}
-          visible={this.props.visible}
-          onClose={this.onClose}
-          key="drawer_menu"
-        >
-          <Menu key="drawer_inner_menu" mode="inline">
-              <SubMenu title="Products">
-            <Menu.Item key="products" onClick={this.onClose}>
+      
+          <Menu key="sider_menu" mode="inline" id="side-menu__wrapper" defaultSelectedKeys={['all_products']}
+          defaultOpenKeys={['all_products']}>
+              <SubMenu title="Products" key="all_products">
+            <Menu.Item key="products_side_menu">
               <BulbOutlined />
               <Link to="/products">Explore</Link>
             </Menu.Item>
-            <Menu.Item key="laptops" onClick={this.onClose}>
+            <Menu.Item key="laptops_side_menu">
               <ConsoleSqlOutlined />
               <Link to="/products/laptops">Laptops</Link>
             </Menu.Item>
             </SubMenu>
 
 
-            <Menu.Item key="about" onClick={this.onClose}>
+            <Menu.Item key="about_side_menu">
               <MessageOutlined />
               <Link to="/about">About</Link>
             </Menu.Item>
-            <Menu.Item key="mail" onClick={this.onClose}>
+            <Menu.Item key="mail_side_menu">
             <MailOutlined />
             <Link to="/contact">Contact Us</Link>
           </Menu.Item>
 
-          <Menu.Item key="search" onClick={this.onClose}>
+          <Menu.Item key="search_side_menu">
               <SearchOutlined />
               <Link to="/products/search">Search</Link>
           </Menu.Item>
 
           
           </Menu>
-        </Drawer>
-      </div>
+        
     );
   }
 }
@@ -64,4 +55,4 @@ const mapStateToProps = (store) => {
   return { visible: store.toggleDrawer };
 };
 
-export default connect(mapStateToProps, { toggleDrawer })(DrawerMenu);
+export default connect(mapStateToProps, { toggleDrawer })(SideMenu);

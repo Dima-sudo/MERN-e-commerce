@@ -8,7 +8,7 @@ const authController = require('../Controllers/authController');
 const isLoggedIn = authController.isAuthenticated;
 
 // Get all products with no filters
-router.get('/search', productController.query);
+router.get('/search/:query', productController.query);
 router.post('/:itemId/checkout', isLoggedIn, productController.checkout);
 router.get('/getlistings', isLoggedIn, productController.getListings);
 router.get('/', productController.getProducts);

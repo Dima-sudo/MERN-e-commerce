@@ -26,6 +26,9 @@ class ProductCard extends Component {
   render() {
     return (
       <div className="mt-5">
+        <Link to={{pathname: `/products/${this.props.self._id}`,
+                       self: this.props.self 
+                     }}>
         <Card
           style={{ width: 300 }}
           cover={
@@ -54,6 +57,7 @@ class ProductCard extends Component {
             description={this.props.description}
           />
         </Card>
+        </Link>
       </div>
     );
   }

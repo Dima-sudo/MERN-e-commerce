@@ -127,7 +127,7 @@ exports.update = async (req, res) => {
 
     // Comments are tracked as a seperate collection as well as inside in the product object
     await Comment.findByIdAndUpdate({ _id: commentId }, updatedComment, {
-      useFindAndModify: false,
+      useFindAndModify: false
     });
     // Save the product with the updated comment
     await foundProduct.save();

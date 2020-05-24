@@ -10,9 +10,10 @@ import { Empty } from "antd";
 
 import { v4 as uuid } from "uuid";
 
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 
 import { Row, Col, Card, Button, Breadcrumb, Tabs, Layout } from "antd";
+
 
 const { TabPane } = Tabs;
 const { Content } = Layout;
@@ -130,13 +131,26 @@ class Profile extends Component {
           >
             Deactivate Account
           </Button>
+          <Button type="primary" shape="round" size="large">
+            <Link to="/products/create">
+              Create A New Listing
+            </Link>
+          </Button>
           <Button
             shape="round"
             className="user-panel__button"
-            type="primary"
             size="large"
           >
             Reset Password
+          </Button>
+          <Button
+            shape="round"
+            className="user-panel__button"
+            size="large"
+          >
+            <Link to="/contact">
+              Need Help?
+            </Link>
           </Button>
         </Card>
 

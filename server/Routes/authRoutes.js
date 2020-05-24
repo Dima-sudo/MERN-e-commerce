@@ -9,6 +9,7 @@ const isLoggedIn = authController.isAuthenticated;
 const validateSignup = validators.validate_Account_Creation_Form;
 
 
+router.patch('/changePassword', isLoggedIn, authController.changePassword);
 router.delete('/deactivate', isLoggedIn, authController.deactivate);
 router.post('/signup', validateSignup, authController.signUp);
 router.post('/login', authController.login);

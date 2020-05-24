@@ -7,14 +7,17 @@ import Fast from "../Images/fast.svg";
 import Global from "../Images/global.svg";
 import New from "../Images/New.svg";
 
-import { Statistic } from "antd";
+import { Statistic, Layout } from "antd";
 const { Countdown } = Statistic;
 const deadline = Date.now() + 1000 * 60 * 60 * 24 * 2 + 1000 * 30;
+
+const { Content } = Layout;
 
 class Home extends Component {
   render() {
     return (
       <React.Fragment>
+        <Content>
         <section className="large-section__wrapper">
           <div className="container home-section__large">
             <h1>It's coming, soon.</h1>
@@ -72,6 +75,7 @@ class Home extends Component {
 
           </div>
         </section>
+        </Content>
       </React.Fragment>
     );
   }

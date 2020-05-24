@@ -4,3 +4,25 @@
 .app-page__header{
     background-color: #fff;
 }
+
+.app-page__sider{
+    background-color: #fff;
+    height: 100%;
+    min-height: 90vh;
+}
+
+// Gets rid of the default ant border on menus
+.ant-menu-inline, .ant-menu-vertical, .ant-menu-vertical-left{
+    border-right: none;
+}
+
+// .ant-layout-has-sider{
+//     background-color: #fff;
+// }
+
+// On smaller screens display a drawer menu
+@media screen and (max-width: 1440px){
+    .app-page__sider{
+        display: none;
+    }
+}

@@ -2,8 +2,8 @@ import React, { Component } from "react";
 
 import { Layout, Card } from "antd";
 
-import { Form, Input, Button, Typography, Space, Spin } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { Form, Input, Button, Typography, Space, Spin, Breadcrumb } from "antd";
+import { UserOutlined, LockOutlined, HomeOutlined } from "@ant-design/icons";
 
 const { Content } = Layout;
 
@@ -26,6 +26,22 @@ class Login extends Component {
     };
   }
 
+  renderBreadcrumb = () => {
+    return (
+      <Breadcrumb>
+        <Breadcrumb.Item href="">
+          <HomeOutlined />
+        </Breadcrumb.Item>
+        <Breadcrumb.Item href="">
+          <Space>
+            <UserOutlined />
+            Login
+          </Space>
+        </Breadcrumb.Item>
+      </Breadcrumb>
+    );
+  };
+
   // Conditional of form and spinner animation
   renderForm = () => {
     // If there's a user redirect to homepage and turn off the isFetching loader flag
@@ -35,7 +51,7 @@ class Login extends Component {
     } else if (this.props.isFetching === true) {
       return (
         <span className="login-spinner__positioning">
-        <Spin size="large" className="my-5 py-5" />
+          <Spin size="large" className="my-5 py-5" />
         </span>
       );
     } else if (this.props.isLoggedIn === null) {
@@ -93,7 +109,7 @@ class Login extends Component {
                 Log in
               </Button>
               <Text>
-                Don't have an account? <Link to="/">Signup</Link>
+                Don't have an account? <Link to="/signup">Sign Up</Link>
               </Text>
             </Space>
           </Form.Item>
@@ -127,7 +143,7 @@ class Login extends Component {
   render() {
     return (
       <Content className="container">
-        <Card title="Login" className="my-5">
+        <Card title={this.renderBreadcrumb()} className="my-5 slide-in">
           {this.renderForm()}
         </Card>
       </Content>

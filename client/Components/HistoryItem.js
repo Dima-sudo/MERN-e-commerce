@@ -13,6 +13,30 @@ import "../scss/Components/HistoryItem.scss";
 
 class HistoryItem extends Component {
 
+  renderButtons = () => {
+    if(this.props.variant === 'display'){
+      return null;
+    }
+
+    return(
+      <span className="history-item__buttons px-3">
+          
+          <Button type="secondary">
+          {/* handleEdit returns a plain object with the required path and item data */}
+          <Link to={this.handleEdit}>
+            <EditOutlined />
+            Edit
+          </Link>
+          </Button>
+          
+          <Button danger onClick={this.handleDelete}>
+            <DeleteOutlined />
+            Delete
+          </Button>
+        </span>
+    )
+  }
+
   handleEdit = () => {
     const itemId = this.props.self._id;
 
@@ -87,25 +111,12 @@ class HistoryItem extends Component {
               {this.props.price} ILS
             </h3>
           </span>
-          <p>{this.props.description.slice(0, 50).trim()}...</p>
+          <p>{this.props.description.slice(0, 100).trim()}...</p>
         </span>
 
         {/* Buttons */}
-        <span className="history-item__buttons px-3">
-          
-          <Button type="secondary">
-          {/* handleEdit returns a plain object with the required path and item data */}
-          <Link to={this.handleEdit}>
-            <EditOutlined />
-            Edit
-          </Link>
-          </Button>
-          
-          <Button danger onClick={this.handleDelete}>
-            <DeleteOutlined />
-            Delete
-          </Button>
-        </span>
+        {this.renderButtons()}
+        
       </div>
     );
   }

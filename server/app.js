@@ -7,6 +7,7 @@ const fileUpload = require('express-fileupload');
 
 const cors = require('cors');
 
+const miscRoutes = require('./Routes/miscRoutes');
 const postRoutes = require('./Routes/postsRoutes');
 const authRoutes = require('./Routes/authRoutes');
 const productRoutes = require('./Routes/productRoutes');
@@ -30,6 +31,7 @@ app.use(fileUpload({
 }))
 
 // Routes
+app.use('/misc', miscRoutes);
 app.use('/products/comments', commentRoutes);
 app.use('/products/televisions', televisionRoutes);
 app.use('/products/laptops', laptopRoutes);

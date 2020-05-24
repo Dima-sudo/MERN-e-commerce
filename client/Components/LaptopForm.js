@@ -23,6 +23,7 @@ import { Redirect, Link } from "react-router-dom";
 import "../scss/Pages/CreateProduct.scss";
 
 const { Content } = Layout;
+const { TextArea } = Input;
 
 import { connect } from "react-redux";
 import { createLaptop, updateLaptop } from "../Redux/Actions/ProductActions";
@@ -36,7 +37,7 @@ class LaptopForm extends Component {
     let self = null;
 
     // If in update mode, and an existing product is passed, prefill the form with passed product's information.
-    if (this.props.location.self) {
+    if (this.props.location) {
       self = this.props.location.self;
     }
     // Else show a creation form with empty fields.
@@ -118,7 +119,7 @@ class LaptopForm extends Component {
         8
       );
       return false;
-    } else if (+this.state.price <= 0 || typeof this.state.price !== "number") {
+    } else if (+this.state.price <= 0) {
       message.error("The price should be a positive integer", 4);
       return false;
     } else if (this.state.cpu.length < 6 || !this.state.cpu.includes(" ")) {
@@ -227,7 +228,7 @@ class LaptopForm extends Component {
       });
 
       // If in update mode
-      if (this.props.location.self) {
+      if (this.props.location) {
         // Redux action creator
         const itemId = this.props.location.self._id;
         this.props.updateLaptop(itemId, formData);
@@ -249,7 +250,7 @@ class LaptopForm extends Component {
       <Redirect to="/profile" />
     ) : (
       <Content className="container">
-        <Card title={this.renderBreadcrumb()} className="my-5">
+        <Card title={this.renderBreadcrumb()} className="my-5 slide-in">
           <Form
             size="middle"
             name="create_form"
@@ -303,7 +304,15 @@ class LaptopForm extends Component {
                 },
               ]}
             >
-              <Input type="text" placeholder="Description" />
+              {/* <Input type="text" placeholder="Description" /> */}
+
+              <TextArea
+                type="text"
+                name="description"
+                placeholder="How would you describe it?"
+                autoSize={{ minRows: 3, maxRows: 7 }}
+              />
+
             </Form.Item>
 
             <Form.Item
@@ -360,7 +369,8 @@ class LaptopForm extends Component {
               label="Upload"
               valuePropName="fileList"
               getValueFromEvent={this.handleFile}
-              extra="Pick an image to upload"
+              extra="Pick images to upload"
+              help="Note: Any uploaded images will replaces the existing ones of this listing."
             >
               {/* beforeUpload returns false to prevent default behaviour */}
               <Upload

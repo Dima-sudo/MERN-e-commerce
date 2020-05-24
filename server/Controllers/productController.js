@@ -20,29 +20,52 @@ cloudinary.config({
  * @returns a list of products that match the value queried by the user
  */
 exports.query = async (req, res) => {
+  const { query } = req.params;
 
   // Unformatted
-  const inputArray = req.body.query.split(' ');
-  // Formatted data with every element in lowercase since the search is case-sensitive
-  let queryData = []
+  const inputArray = query.split(" ");
 
-  inputArray.forEach(tag => {
-    lowercaseTag = tag.toLowerCase();
-    queryData = [...queryData, lowercaseTag];
+  // Formatted data with every element in lowercase since the search is case-sensitive
+  let queryData = [];
+
+  inputArray.forEach((tag) => {
+    lowerCaseTag = tag.toLowerCase();
+    queryData = [...queryData, lowerCaseTag];
   });
 
-  try{
-    // Splits the user input into an array and looks for matching tags 
-    const products = await AbstractProduct.find({tags: {"$in": queryData }});
+  try {
+    // Splits the user input into an array and looks for matching tags
+    const products = await AbstractProduct.find({ tags: { $in: queryData } }).populate("createdBy comments")
+    .populate({
+      path: "comments",
+      populate: {
+        path: "createdBy",
+        model: "User",
+      },
+    });;
 
-    if(!products || products.length === 0) return res.status(200).json({message: "No products were found", status: "success"});
-  
-    return res.status(200).json({message: "Products found", products: products, status: "success"});
+    if (!products || products.length === 0)
+      return res
+        .status(200)
+        .json({ message: "No products were found", products: "null", status: "success" });
+
+    return res
+      .status(200)
+      .json({
+        message: "Products found",
+        products: products,
+        status: "success",
+      });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({
+        message: "Error searching for the requested query",
+        error: err.message,
+        status: "failure",
+      });
   }
-  catch(err){
-    return res.status(500).json({message: "Error searching for the requested query", error: err.message, status: "failure"});
-  }
-}
+};
 
 /**
  * @param token A purchase token should be passed as the req.body object from the client. Makes a payment via Stripe servers
@@ -97,21 +120,17 @@ exports.checkout = async (req, res) => {
     console.log(charge);
 
     if (charge.status === "succeeded") {
-      return res
-        .status(200)
-        .json({
-          message: "Payment process complete",
-          charge: charge,
-          status: "success",
-        });
+      return res.status(200).json({
+        message: "Payment process complete",
+        charge: charge,
+        status: "success",
+      });
     } else {
-      return res
-        .status(200)
-        .json({
-          message: "Payment process failed",
-          charge: charge,
-          status: "failure",
-        });
+      return res.status(200).json({
+        message: "Payment process failed",
+        charge: charge,
+        status: "failure",
+      });
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,13 +142,11 @@ exports.checkout = async (req, res) => {
     //                                                                                                          //
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////
   } catch (err) {
-    return res
-      .status(500)
-      .json({
-        message: "Error during checkout",
-        error: err.message,
-        status: "failure",
-      });
+    return res.status(500).json({
+      message: "Error during checkout",
+      error: err.message,
+      status: "failure",
+    });
   }
 };
 
@@ -146,21 +163,17 @@ exports.getListings = async (req, res) => {
         .status(200)
         .json({ message: "No products found", status: "success" });
     }
-    return res
-      .status(200)
-      .json({
-        message: "Products found",
-        products: productList,
-        status: "success",
-      });
+    return res.status(200).json({
+      message: "Products found",
+      products: productList,
+      status: "success",
+    });
   } catch (err) {
-    return res
-      .status(500)
-      .json({
-        message: "Error fetching listings",
-        error: err.message,
-        status: "failure",
-      });
+    return res.status(500).json({
+      message: "Error fetching listings",
+      error: err.message,
+      status: "failure",
+    });
   }
 };
 
@@ -213,11 +226,11 @@ exports.create = (Product) => {
     // Temp file names
     const filesToDelete = [];
     // Tags are coming in from the formData as a string in the format of x,y,z so need to format before saving
-    const unformattedTags = req.body.tags.split(',');
+    const unformattedTags = req.body.tags.split(",");
     let tags = [];
 
     // Tags might be in mixed-case so converting everything to lower case before saving to db
-    unformattedTags.forEach(tag => {
+    unformattedTags.forEach((tag) => {
       const lowercaseTag = tag.toLowerCase();
       tags = [...tags, lowercaseTag];
     });
@@ -250,7 +263,7 @@ exports.create = (Product) => {
                 ...req.body,
                 createdBy: req.User.id,
                 images,
-                tags
+                tags,
               });
 
               // Async delete temp files
@@ -265,65 +278,54 @@ exports.create = (Product) => {
               product
                 .save()
                 .then((savedProduct) => {
-                  return res
-                    .status(201)
-                    .json({
-                      message: "Your product was created",
-                      product: savedProduct,
-                      status: "success",
-                    });
+                  return res.status(201).json({
+                    message: "Your product was created",
+                    product: savedProduct,
+                    status: "success",
+                  });
                 })
                 .catch((err) => {
-                  return res
-                    .status(500)
-                    .json({
-                      message: "Error saving the product",
-                      error: err,
-                      status: "failure",
-                    });
+                  return res.status(500).json({
+                    message: "Error saving the product",
+                    error: err,
+                    status: "failure",
+                  });
                 });
             }
           })
           .catch((err) => {
-            return res
-              .status(500)
-              .json({
-                message: `Error uploading image number ${i}`,
-                error: err,
-                status: "failure",
-              });
+            return res.status(500).json({
+              message: `Error uploading image number ${i}`,
+              error: err,
+              status: "failure",
+            });
           });
       });
     }
 
     // If no images are provided
     if (!req.files) {
-  
       const product = new Product({
         ...req.body,
         createdBy: req.User.id,
-        tags
+        tags,
       });
 
       product
         .save()
         .then((savedProduct) => {
-          return res
-            .status(201)
-            .json({
-              message: `Your product was created`,
-              product: savedProduct,
-              status: "success",
-            });
+          return res.status(201).json({
+            message: `Your product was created`,
+            product: savedProduct,
+            status: "success",
+          });
         })
         .catch((err) => {
-          return res
-            .status(500)
-            .json({
-              message: "Error saving the product",
-              error: err,
-              status: "failure",
-            });
+          return res.status(500).json({
+            message: "Error saving the product",
+            error: err,
+            status: "failure",
+          });
         });
     }
   };
@@ -336,13 +338,11 @@ exports.delete = (Product) => {
     Product.findByIdAndDelete({ _id: itemId })
       .then((deletedProduct) => {
         if (!deletedProduct)
-          return res
-            .status(200)
-            .json({
-              message: "No product was found",
-              error: "No product",
-              status: "failure",
-            });
+          return res.status(200).json({
+            message: "No product was found",
+            error: "No product",
+            status: "failure",
+          });
 
         // Delete files from cloud storage if they exist
         if (deletedProduct.images) {
@@ -363,22 +363,18 @@ exports.delete = (Product) => {
         }
         //
 
-        return res
-          .status(200)
-          .json({
-            message: "Product deleted",
-            product: deletedProduct,
-            status: "success",
-          });
+        return res.status(200).json({
+          message: "Product deleted",
+          product: deletedProduct,
+          status: "success",
+        });
       })
       .catch((err) => {
-        return res
-          .status(500)
-          .json({
-            message: "Error deleting the product",
-            error: err,
-            status: "failure",
-          });
+        return res.status(500).json({
+          message: "Error deleting the product",
+          error: err,
+          status: "failure",
+        });
       });
   };
 };
@@ -395,12 +391,11 @@ exports.update = (Product) => {
     // Temp file names
     const filesToDelete = [];
     // Tags are coming in from the form data as a string in the format of x,y,z so need to format before saving
-    const unformattedTags = req.body.tags.split(',');
+    const unformattedTags = req.body.tags.split(",");
     let tags = [];
 
-
     // Tags might be in mixed-case so converting everything to lower case before saving to db
-    unformattedTags.forEach(tag => {
+    unformattedTags.forEach((tag) => {
       const lowercaseTag = tag.toLowerCase();
       tags = [...tags, lowercaseTag];
     });
@@ -481,29 +476,23 @@ exports.update = (Product) => {
             })
               .then((product) => {
                 if (!product)
-                  return res
-                    .status(200)
-                    .json({
-                      message: "No product was found",
-                      error: "No product",
-                      status: "failure",
-                    });
-                return res
-                  .status(201)
-                  .json({
-                    message: "The product was updated",
-                    product: updatedProduct,
-                    status: "success",
-                  });
-              })
-              .catch((err) => {
-                return res
-                  .status(500)
-                  .json({
-                    message: "Error updating the product",
-                    error: err,
+                  return res.status(200).json({
+                    message: "No product was found",
+                    error: "No product",
                     status: "failure",
                   });
+                return res.status(201).json({
+                  message: "The product was updated",
+                  product: updatedProduct,
+                  status: "success",
+                });
+              })
+              .catch((err) => {
+                return res.status(500).json({
+                  message: "Error updating the product",
+                  error: err,
+                  status: "failure",
+                });
               });
             //
           }
@@ -522,29 +511,23 @@ exports.update = (Product) => {
       })
         .then((product) => {
           if (!product)
-            return res
-              .status(200)
-              .json({
-                message: "No product was found",
-                error: "No product",
-                status: "failure",
-              });
-          return res
-            .status(201)
-            .json({
-              message: "The product was updated",
-              product: updatedProduct,
-              status: "success",
-            });
-        })
-        .catch((err) => {
-          return res
-            .status(500)
-            .json({
-              message: "Error updating the product",
-              error: err,
+            return res.status(200).json({
+              message: "No product was found",
+              error: "No product",
               status: "failure",
             });
+          return res.status(201).json({
+            message: "The product was updated",
+            product: updatedProduct,
+            status: "success",
+          });
+        })
+        .catch((err) => {
+          return res.status(500).json({
+            message: "Error updating the product",
+            error: err,
+            status: "failure",
+          });
         });
     }
   };
@@ -558,29 +541,23 @@ exports.findById = (Product) => {
       .populate("comments")
       .then((foundProduct) => {
         if (!foundProduct)
-          return res
-            .status(200)
-            .json({
-              message: "No product was found",
-              error: "No product",
-              status: "failure",
-            });
-        return res
-          .status(200)
-          .json({
-            message: "Product found",
-            product: foundProduct,
-            status: "success",
-          });
-      })
-      .catch((err) => {
-        return res
-          .status(500)
-          .json({
-            message: "Error fetching product from DB",
-            error: err,
+          return res.status(200).json({
+            message: "No product was found",
+            error: "No product",
             status: "failure",
           });
+        return res.status(200).json({
+          message: "Product found",
+          product: foundProduct,
+          status: "success",
+        });
+      })
+      .catch((err) => {
+        return res.status(500).json({
+          message: "Error fetching product from DB",
+          error: err,
+          status: "failure",
+        });
       });
   };
 };
@@ -601,22 +578,18 @@ exports.getCategory = (Product) => {
           return res
             .status(200)
             .json({ message: "No products were found", status: "success" });
-        return res
-          .status(200)
-          .json({
-            message: "Products found",
-            products: productList,
-            status: "success",
-          });
+        return res.status(200).json({
+          message: "Products found",
+          products: productList,
+          status: "success",
+        });
       })
       .catch((err) => {
-        return res
-          .status(400)
-          .json({
-            message: "Error fetching products from DB",
-            error: err,
-            status: "failure",
-          });
+        return res.status(400).json({
+          message: "Error fetching products from DB",
+          error: err,
+          status: "failure",
+        });
       });
   };
 };

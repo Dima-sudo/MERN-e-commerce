@@ -7,7 +7,10 @@ export default (state = {}, action) => {
         return {...state, Laptops: [...action.payload]};
     }
     if(action.type === 'USER_LISTINGS'){
-        return {...state, UserListings: [...action.payload]}
+        return {...state, UserListings: [...action.payload]};
+    }
+    if(action.type === 'SEARCH_RESULTS'){
+        return {...state, SearchResults: [...action.payload]};
     }
 
     return state;

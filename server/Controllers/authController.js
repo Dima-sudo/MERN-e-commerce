@@ -15,6 +15,66 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+/**
+ * Changes the user's password
+ */
+exports.changePassword = async (req, res) => {
+  const { password, confirmPassword, newPassword } = req.body;
+
+  if (password !== confirmPassword)
+    return res
+      .status(401)
+      .json({
+        message: "Password confirmation does not match",
+        status: "failure",
+      });
+
+  try {
+    const foundUser = await User.findOne({ email: req.User.email });
+
+    if (!foundUser)
+      return res.status(200).json({
+        message: "This user does not exist",
+        error: "No user",
+        status: "failure",
+      });
+
+    const result = await bcrypt.compare(password, foundUser.password);
+
+    // If wrong password
+    if (result !== true) {
+      return res.status(200).json({
+        message: "Wrong password",
+        error: "Unauthorized",
+        status: "failure",
+      });
+    }
+
+    // Else everything is OK
+    const hashedPassword = await bcrypt.hash(newPassword, 16);
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.User.id,
+      { password: hashedPassword },
+      { useFindAndModify: false }
+    );
+
+    return res
+      .status(201)
+      .json({
+        message: "Password updated successfully",
+        user: updatedUser,
+        status: "success",
+      });
+  } catch (err) {
+    return res.status(500).json({
+      message: "There was an error changing your password",
+      error: err.message,
+      status: "failure",
+    });
+  }
+};
+
 exports.deactivate = async (req, res) => {
   const deletedUser = await User.findByIdAndDelete({ _id: req.User.id });
 
@@ -35,29 +95,29 @@ exports.deactivate = async (req, res) => {
     console.log("Products to delete files from: ");
     console.log(products);
 
-    products.forEach(product => {
-      product.images.forEach(image => {
+    products.forEach((product) => {
+      product.images.forEach((image) => {
         cloudinary.uploader
-                .destroy(image.public_id)
-                .then((res) => {
-                  console.log(
-                    `Image with the public_id of  ${image.public_id} was deleted`
-                  );
-                })
-                .catch((err) => {
-                  console.log("Error deleting the image");
-                  console.log(err.message);
-                });
+          .destroy(image.public_id)
+          .then((res) => {
+            console.log(
+              `Image with the public_id of  ${image.public_id} was deleted`
+            );
+          })
+          .catch((err) => {
+            console.log("Error deleting the image");
+            console.log(err.message);
+          });
       });
     });
 
-    const deletedProducts = await AbstractProduct.deleteMany({createdBy: req.User.id});
+    const deletedProducts = await AbstractProduct.deleteMany({
+      createdBy: req.User.id,
+    });
 
     console.log("Products removed: ");
     console.log(deletedProducts);
-    
   }
-
 
   return res.status(200).json({
     message: "The user was deleted",
@@ -65,7 +125,6 @@ exports.deactivate = async (req, res) => {
     status: "success",
   });
 };
-
 
 /**
  * Creates a new User model
@@ -104,11 +163,11 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    foundUser = await User.findOne({ email });
+    const foundUser = await User.findOne({ email });
 
     if (!foundUser)
       return res.status(200).json({
-        message: "User does not exist in db",
+        message: "This user does not exist",
         error: "No user",
         status: "failure",
       });

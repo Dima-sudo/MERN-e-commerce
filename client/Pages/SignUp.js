@@ -169,7 +169,7 @@ class SignUp extends Component {
       this.state.isSuccess === true ? <Redirect to="/login" />
       :
       <Content className="container">
-        <Card title={this.renderBreadcrumb()} className="my-5">
+        <Card title={this.renderBreadcrumb()} className="my-5 slide-in">
           {this.renderForm()}
         </Card>
       </Content>

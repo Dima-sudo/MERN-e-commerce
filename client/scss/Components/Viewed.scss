@@ -1,0 +1,25 @@
+
+
+// To make the viewed drawer responsive
+.viewed-drawer__wrapper.ant-drawer.ant-drawer-right{
+    .ant-drawer-content-wrapper{
+        width: 720px !important;
+    }
+}
+
+
+@media screen and (min-width:0px) and (max-width: 767px){
+    .viewed-drawer__wrapper.ant-drawer.ant-drawer-right{
+        .ant-drawer-content-wrapper{
+            width: 360px !important;
+        }
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px){
+    .viewed-drawer__wrapper.ant-drawer.ant-drawer-right{
+        .ant-drawer-content-wrapper{
+            width: 480px !important;
+        }
+    }
+}

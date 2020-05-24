@@ -66,7 +66,7 @@ class Products extends Component {
           {/* Some formatting in description field to keep long descriptions manageable */}
           <ProductCard
             title={product.title}
-            description={`${product.description.slice(0, 50).trim()}...`}
+            description={`${product.description.slice(0, 100).trim()}...`}
             self={product}
             key={uuidv()}
           />
@@ -91,6 +91,8 @@ const mapStateToProps = (store) => {
       return { Products: store.Products.AllProducts, isFetching: store.isFetching };
     case 'laptops':
       return { Products: store.Products.Laptops, isFetching: store.isFetching };
+    case 'search':
+      return {Products: store.Products.SearchResults, isFetching: store.isFetching};
 
     default: 
     return { Products: store.Products.AllProducts, isFetching: store.isFetching };

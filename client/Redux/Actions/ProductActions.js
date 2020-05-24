@@ -4,6 +4,44 @@ import alertConfig from './AlertActions'
 
 import { message } from 'antd';
 
+
+export const search = (query) => {
+    return async (dispatch) => {
+
+        const options = {
+            headers: {
+              "Content-Type": "application/json",
+              'Access-Control-Allow-Origin': '*'
+            }
+        }
+
+        console.log("Inside search action creator");
+        console.log(query);
+        const res = await axios.get(`${process.env.SERVER_URL}/products/search/${query}`, options);
+        console.log("Finished request");
+        console.log(res);
+
+        if(res.data.status === 'success'){
+            const action = {
+                type: 'SEARCH_RESULTS',
+                payload: res.data.products
+            }
+
+            dispatch(action);
+        }
+
+        else if(res.data.status === 'failure'){
+            const alert = {
+                message: "Whoops! There was an error searching for these items",
+                type: "error"
+            }
+    
+            dispatch(alertConfig(alert));
+        }
+
+    }
+}
+
 export const updateLaptop = (itemId, formData) => {
     return async (dispatch, getState) => {
         const token = getState().isLoggedIn.token;

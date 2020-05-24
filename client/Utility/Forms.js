@@ -3,11 +3,18 @@
  * @returns {[string]} - An array of filtered strings based on the form's input. Gets rid of punctuation
  * and conjuction words.
  * 
+ * ----------------------------------------------------
  * Example: 
  * 
- * formObject = { title: "I'm a test field" }
+ * formObject = { title: "I'm a test field!" }
  * 
  * returns ["test", "field"];
+ * ----------------------------------------------------
+ * 
+ * Reasoning:
+ * Theoretically, such logic can be implemented on the server-side together with the rest of the search logic.
+ * I opted for implementing it here for performance reasons so there is less stress on the server
+ * in a real world scenario (The final array the server receives is about half of the alternative size for each request).
  * 
  */
 
@@ -66,3 +73,4 @@ export const getTags = (formObject) => {
 
       return tags;
 }
+//

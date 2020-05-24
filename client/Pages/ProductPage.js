@@ -33,6 +33,8 @@ import { v4 as uuidv } from "uuid";
 
 import alertConfig from '../Redux/Actions/AlertActions';
 
+import { AddHistoryItem } from '../Redux/Actions/HistoryActions';
+
 // Stripe
 import StripeCheckout from 'react-stripe-checkout';
 
@@ -100,9 +102,10 @@ class ProductPage extends Component {
       message: 'Working on it',
       description:
         'Thanks for making this purchase. We\'re working on your request and you should receive a confirmation notification in just a moment',
-      icon: <SmileOutlined style={{ color: '#108ee9' }} />,
+      icon: <SmileOutlined style={{ color: '#0070ba' }} />,
     });
-
+    //#108ee9 alt blue
+    
     const res = await axios.post(`${process.env.SERVER_URL}/products/${self._id}/checkout`, token, options);
 
     if(res.data.status === 'success'){
@@ -161,11 +164,15 @@ class ProductPage extends Component {
           e[0] !== "images"
         );
       });
+
+      // Add to Viewed items
+      this.props.AddHistoryItem(self);
     }
 
     this.setState({
       keyValuePairs: tableData,
     });
+
   }
 
   renderCarousel = () => {
@@ -258,7 +265,6 @@ class ProductPage extends Component {
                       Edit
                       </ Link>
                     </Button>
-                    ,
                     <Button onClick={this.deleteComment(comment._id)} size="small" danger shape="round">
                       Delete
                     </Button>
@@ -281,10 +287,13 @@ class ProductPage extends Component {
   };
 
   render() {
-    const self = this.props.history.location.self;
+    let self = null;
+    if(this.props.history.location.self){
+      self = this.props.history.location.self;
+    }
 
     return (
-      this.state.hasPurchased === true || this.state.hasUpdated === true ? <Redirect to="/profile" />
+      this.state.hasPurchased === true || this.state.hasUpdated === true || !self ? <Redirect to="/profile" />
       :
       <Content className="container">
         <Card
@@ -333,4 +342,4 @@ const mapStateToProps = (store) => {
   };
 };
 
-export default connect(mapStateToProps, { alertConfig, getProducts })(ProductPage);
+export default connect(mapStateToProps, { alertConfig, getProducts, AddHistoryItem })(ProductPage);

@@ -4,3 +4,9 @@ export const AddHistoryItem = (item) => {
         payload: item
     }
 }
+
+export const toggleHistory = () => {
+    return {
+        type: 'TOGGLE_HISTORY_VISIBILITY'
+    }
+}
