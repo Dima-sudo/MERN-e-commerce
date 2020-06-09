@@ -16,13 +16,14 @@
     border-right: none;
 }
 
-// .ant-layout-has-sider{
-//     background-color: #fff;
-// }
-
 // On smaller screens display a drawer menu
 @media screen and (max-width: 1440px){
     .app-page__sider{
         display: none;
     }
 }
+
+.ant-notification{
+    margin-top: 4rem;
+}
+

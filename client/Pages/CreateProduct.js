@@ -2,25 +2,22 @@ import React, { Component } from "react";
 
 import {
   Form,
-  Input,
-  Button,
   Select,
   Layout,
   Card,
-  Space,
-  Upload,
-  message,
 } from "antd";
-import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
 import { Redirect } from "react-router-dom";
 
 import "../scss/Pages/CreateProduct.scss";
 
 const { Content } = Layout;
 import LaptopForm from '../Components/LaptopForm';
+import TelevisionForm from '../Components/TelevisionForm';
+import PhoneForm from '../Components/PhoneForm';
+import HeadphonesForm from '../Components/HeadphonesForm';
+import OtherForm from '../Components/OtherForm';
 
 import { connect } from "react-redux";
-import { createLaptop } from "../Redux/Actions/ProductActions";
 
 class CreateProduct extends Component {
   constructor(props) {
@@ -46,45 +43,6 @@ class CreateProduct extends Component {
     });
   };
 
-  renderUploadButton = () => {
-    if (this.state.files.length > 3) {
-      return (
-        <Button disabled>
-          <UploadOutlined /> Upload
-        </Button>
-      );
-    }
-    return (
-      <Button>
-        <UploadOutlined /> Upload
-      </Button>
-    );
-  };
-
-  // Disables the submit button and shows a warning message when there's more than 3 items uploaded
-  renderSubmitButton = () => {
-    if (this.state.files.length > 3) {
-      return (
-        <Button type="primary" disabled htmlType="submit">
-          Next
-        </Button>
-      );
-    }
-    return (
-      <Button type="primary" htmlType="submit">
-        Next
-      </Button>
-    );
-  };
-
-  handleFile = (e) => {
-    this.setState({ files: e.fileList });
-    if (Array.isArray(e)) {
-      return e;
-    }
-    return e && e.fileList;
-  };
-
   handleChange = (e) => {
     if (typeof e[0] === "undefined") return;
 
@@ -96,37 +54,13 @@ class CreateProduct extends Component {
     });
   };
 
-  submitLaptop = () => {
-    const form = {
-      title: this.state.title,
-      description: this.state.description,
-      price: this.state.price,
-      cpu: this.state.cpu,
-      graphics: this.state.graphics,
-      screen: this.state.screen,
-      files: this.state.files,
-    };
-
-    const formData = new FormData();
-
-    for (let key in form) {
-      formData.append(key, form[key]);
-    }
-
-    //   for(var pair of formData.entries()) {
-    //     console.log(pair[0]+ ', '+ pair[1]);
-    //  }
-
-    console.log("Laptop submitted");
-    this.props.createLaptop(formData);
-
-    this.setState({ formSubmitted: true });
-  };
-
   renderForm = () => {
     if (this.state.formSubmitted === true) {
       return <Redirect to="/" />;
-    } else if (this.state.category === null) {
+    } else if(!this.props.isLoggedIn){
+      return <Redirect to="/login" />;
+    } 
+    else if (this.state.category === null) {
       return (
         <Card className="my-5" title="Create Product">
           <Form
@@ -149,6 +83,9 @@ class CreateProduct extends Component {
               >
                 <Select.Option value="Laptop">Laptop</Select.Option>
                 <Select.Option value="Television">Television</Select.Option>
+                <Select.Option value="Phone">Phone</Select.Option>
+                <Select.Option value="Headphones">Headphones</Select.Option>
+                <Select.Option value="Others">Other</Select.Option>
               </Select>
             </Form.Item>
           </Form>
@@ -165,9 +102,52 @@ class CreateProduct extends Component {
         </div>
       );
     } else if (this.state.category === "Television") {
-      return <div>Television form</div>;
+      return (
+        <div>
+          {/* Props for controlling the main form component from within the form */}
+          <TelevisionForm
+            setFormSubmitted={this.setFormSubmitted}
+            resetForm={this.resetForm}
+          />
+        </div>
+      )
     }
+    else if (this.state.category === "Phone") {
+      return (
+        <div>
+          {/* Props for controlling the main form component from within the form */}
+          <PhoneForm
+            setFormSubmitted={this.setFormSubmitted}
+            resetForm={this.resetForm}
+          />
+        </div>
+      )
+    }
+    else if (this.state.category === "Headphones") {
+      return (
+        <div>
+          {/* Props for controlling the main form component from within the form */}
+          <HeadphonesForm
+            setFormSubmitted={this.setFormSubmitted}
+            resetForm={this.resetForm}
+          />
+        </div>
+      )
+    }
+    else if (this.state.category === "Others") {
+      return (
+        <div>
+          {/* Props for controlling the main form component from within the form */}
+          <OtherForm
+            setFormSubmitted={this.setFormSubmitted}
+            resetForm={this.resetForm}
+          />
+        </div>
+      )
+    }
+
   };
+  
 
   render() {
     return (
@@ -178,4 +158,10 @@ class CreateProduct extends Component {
   }
 }
 
-export default connect(null, { createLaptop })(CreateProduct);
+const mapStateToProps = (store) => {
+  return {
+    isLoggedIn: store.isLoggedIn
+  }
+}
+
+export default connect(mapStateToProps)(CreateProduct);

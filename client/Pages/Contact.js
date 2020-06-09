@@ -37,7 +37,6 @@ class Contact extends Component {
     };
   }
 
-
   renderBreadcrumb = () => {
     let name = null;
 
@@ -123,7 +122,7 @@ class Contact extends Component {
     return this.state.hasSubmitted === true ? (
       <Redirect to="/products" />
     ) : (
-      <Content className="container slide-fwd-center">
+      <Content className="container">
         <Card title={this.renderBreadcrumb()} className="my-5 slide-in">
           <Form
             size="middle"

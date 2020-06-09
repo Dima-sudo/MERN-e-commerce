@@ -97,7 +97,7 @@ class CommentForm extends Component {
       <Redirect to="/products" />
     ) : (
       <Content className="container">
-        <Card title="Create Comment" className="my-5">
+        <Card title="Create Comment" className="my-5 slide-in">
           <Form
             size="middle"
             name="create_form"

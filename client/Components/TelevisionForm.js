@@ -13,7 +13,6 @@ import {
 } from "antd";
 import {
   UploadOutlined,
-  LaptopOutlined,
   HomeOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -29,9 +28,10 @@ import { connect } from "react-redux";
 import { createProduct, updateProduct } from "../Redux/Actions/ProductActions";
 
 import { getTags } from "../Utility/Forms";
+
 import { isNumeric } from '../Utility/Misc';
 
-class LaptopForm extends Component {
+class TelevisionForm extends Component {
   constructor(props) {
     super(props);
 
@@ -47,8 +47,8 @@ class LaptopForm extends Component {
         title: "",
         description: "",
         price: "",
-        cpu: "",
-        graphics: "",
+        size: "",
+        audio: "",
         screen: "",
       };
     }
@@ -57,8 +57,8 @@ class LaptopForm extends Component {
       title: self.title,
       description: self.description,
       price: self.price,
-      cpu: self.cpu,
-      graphics: self.graphics,
+      size: self.size,
+      audio: self.audio,
       screen: self.screen,
       files: [],
       hasSubmitted: false,
@@ -85,8 +85,7 @@ class LaptopForm extends Component {
         </Breadcrumb.Item>
         <Breadcrumb.Item href="">
           <Space>
-            <LaptopOutlined />
-            Laptops
+            Televisions
           </Space>
         </Breadcrumb.Item>
       </Breadcrumb>
@@ -99,8 +98,8 @@ class LaptopForm extends Component {
       this.state.title.length === 0 ||
       this.state.description.length === 0 ||
       this.state.price.length === 0 ||
-      this.state.cpu.length === 0 ||
-      this.state.graphics.length === 0 ||
+      this.state.size.length === 0 ||
+      this.state.audio.length === 0 ||
       this.state.screen.length === 0
     ) {
       message.error("Fields cannot be empty", 4);
@@ -123,18 +122,18 @@ class LaptopForm extends Component {
     } else if (+this.state.price <= 0 || isNumeric(this.state.price) === false) {
       message.error("The price should be a positive integer", 4);
       return false;
-    } else if (this.state.cpu.length < 6 || !this.state.cpu.includes(" ")) {
+    } else if (this.state.size.length < 2 || !this.state.size.includes(" ")) {
       message.error(
-        "The CPU field should include the brand and model name of the processor",
+        "The size field should be include the size of the display",
         6
       );
       return false;
     } else if (
-      this.state.graphics.length < 6 ||
-      !this.state.graphics.includes(" ")
+      this.state.audio.length < 6 ||
+      !this.state.audio.includes(" ")
     ) {
       message.error(
-        "The graphics field should include the brand and model name of the card",
+        "The audio field should include the brand name and model of the speakers",
         6
       );
       return false;
@@ -203,14 +202,14 @@ class LaptopForm extends Component {
     });
   };
 
-  submitLaptop = () => {
+  submitTelevision = () => {
     if (this.isValidated()) {
       const form = {
         title: this.state.title,
         description: this.state.description,
         price: this.state.price,
-        cpu: this.state.cpu,
-        graphics: this.state.graphics,
+        size: this.state.size,
+        audio: this.state.audio,
         screen: this.state.screen,
       };
 
@@ -232,14 +231,15 @@ class LaptopForm extends Component {
       if (this.props.location) {
         // Redux action creator
         const itemId = this.props.location.self._id;
-        this.props.updateProduct(itemId, formData, 'laptops');
+        this.props.updateProduct(itemId, formData, 'televisions');
 
         this.setState({ hasSubmitted: true });
       }
       // Else create a new product
       else {
         // Redux action creator
-        this.props.createProduct(formData, 'laptops');
+        this.props.createProduct(formData, 'televisions');
+
         // Passed from form CreateProduct component that manages all forms
         this.props.setFormSubmitted();
       }
@@ -255,10 +255,10 @@ class LaptopForm extends Component {
           <Form
             size="middle"
             name="create_form"
-            key="laptop_form_key"
+            key="television_form_key"
             className="create-form my-3"
             onFieldsChange={this.handleChange}
-            onFinish={this.submitLaptop}
+            onFinish={this.submitTelevision}
             fields={[
               {
                 name: ["title"],
@@ -273,21 +273,21 @@ class LaptopForm extends Component {
                 value: this.state.price,
               },
               {
-                name: ["cpu"],
-                value: this.state.cpu,
+                name: ["size"],
+                value: this.state.size,
               },
               {
-                name: ["graphics"],
-                value: this.state.graphics,
+                name: ["audio"],
+                value: this.state.audio,
               },
               {
                 name: ["screen"],
                 value: this.state.screen,
               },
             ]}
-            onFinish={this.submitLaptop}
+            onFinish={this.submitTelevision}
           >
-            <h1 className="create-form__title">Laptop Form</h1>
+            <h1 className="create-form__title">Television Form</h1>
 
             <Form.Item
               name="title"
@@ -301,11 +301,10 @@ class LaptopForm extends Component {
               rules={[
                 {
                   required: true,
-                  message: "Please fill out the laptop's description",
+                  message: "Please fill out the television's description",
                 },
               ]}
             >
-              {/* <Input type="text" placeholder="Description" /> */}
 
               <TextArea
                 type="text"
@@ -321,7 +320,7 @@ class LaptopForm extends Component {
               rules={[
                 {
                   required: true,
-                  message: "Please fill out the laptop's price",
+                  message: "Please fill out the television's price",
                 },
               ]}
             >
@@ -329,27 +328,27 @@ class LaptopForm extends Component {
             </Form.Item>
 
             <Form.Item
-              name="cpu"
+              name="size"
               rules={[
                 {
                   required: true,
-                  message: "Please fill out the laptop's processor",
+                  message: "Please fill out the television's size",
                 },
               ]}
             >
-              <Input type="text" placeholder="CPU" />
+              <Input type="text" placeholder="How big is it?" />
             </Form.Item>
 
             <Form.Item
-              name="graphics"
+              name="audio"
               rules={[
                 {
                   required: true,
-                  message: "Please fill out the laptop's graphics",
+                  message: "Please fill out the television's audio",
                 },
               ]}
             >
-              <Input type="text" placeholder="Graphics" />
+              <Input type="text" placeholder="Audio" />
             </Form.Item>
 
             <Form.Item
@@ -357,7 +356,7 @@ class LaptopForm extends Component {
               rules={[
                 {
                   required: true,
-                  message: "Please fill out the laptop's screen",
+                  message: "Please fill out the television's screen",
                 },
               ]}
             >
@@ -371,7 +370,7 @@ class LaptopForm extends Component {
               valuePropName="fileList"
               getValueFromEvent={this.handleFile}
               extra="Pick images to upload"
-              help="Note: Any uploaded images will replaces the existing ones of this listing, limited to 3 images."
+              help="Note: Any uploaded images will replaces the existing ones of this listing, Limited to 3 images."
             >
               {/* beforeUpload returns false to prevent default behaviour */}
               <Upload
@@ -407,5 +406,5 @@ const mapStateToProps = (store) => {
 };
 
 export default connect(mapStateToProps, { createProduct, updateProduct })(
-  LaptopForm
+  TelevisionForm
 );

@@ -1,11 +1,15 @@
 import React, { Component } from "react";
 
 import { connect } from "react-redux";
-import { getProducts, getLaptops } from "../Redux/Actions/ProductActions";
+import { getProducts, getLaptops, getTelevisions, getPhones, getHeadphones, getOthers } from "../Redux/Actions/ProductActions";
 import toggleFetching from '../Redux/Actions/toggleFetching';
 
-import { Row, Col, Layout, Spin } from "antd";
+import { Row, Col, Layout, Spin, Button } from "antd";
 import ProductCard from "../Components/ProductCard";
+
+import { Link } from 'react-router-dom';
+
+import notFound from '../Images/not-found.svg'
 
 const { Content } = Layout;
 
@@ -42,6 +46,18 @@ class Products extends Component {
       case 'laptops':
         await this.props.getLaptops();
         break;
+      case 'televisions':
+        await this.props.getTelevisions();
+        break;
+      case 'phones':
+        await this.props.getPhones();
+        break;
+      case 'headphones':
+        await this.props.getHeadphones();
+        break;
+      case 'others':
+        await this.props.getOthers();
+        break;
 
       default: 
         await this.props.getProducts();
@@ -56,8 +72,11 @@ class Products extends Component {
   }
 
   renderItems = () => {
-    if (this.props.isFetching || !this.props.Products) {
+    if (this.props.isFetching) {
       return <div className="product-spinner__positioning"><Spin size="large" /></div>
+    }
+    if(!this.props.Products){
+      return <div className="not-found__wrapper empty-positioning attention-wobble"><img src={notFound} /><h1>Whoops!</h1><p>We're sorry. Couldn't find what you're looking for, click here to try again.</p> <Button type="primary" size="large" shape="round"><Link to="/products/search">Try Again</Link></Button></div>
     }
 
     return this.props.Products.map((product) => {
@@ -91,6 +110,14 @@ const mapStateToProps = (store) => {
       return { Products: store.Products.AllProducts, isFetching: store.isFetching };
     case 'laptops':
       return { Products: store.Products.Laptops, isFetching: store.isFetching };
+    case 'televisions':
+      return { Products: store.Products.Televisions, isFetching: store.isFetching };
+    case 'phones':
+      return { Products: store.Products.Phones, isFetching: store.isFetching };
+    case 'headphones':
+      return { Products: store.Products.Headphones, isFetching: store.isFetching };
+    case 'others':
+      return { Products: store.Products.Others, isFetching: store.isFetching };
     case 'search':
       return {Products: store.Products.SearchResults, isFetching: store.isFetching};
 
@@ -100,4 +127,4 @@ const mapStateToProps = (store) => {
   
 };
 
-export default connect(mapStateToProps, { getProducts, getLaptops, toggleFetching })(Products);
+export default connect(mapStateToProps, { getProducts, getLaptops, getTelevisions, getPhones, getHeadphones, getOthers, toggleFetching })(Products);

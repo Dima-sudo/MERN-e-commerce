@@ -1,73 +1,106 @@
-import axios from 'axios';
-import alertConfig from './AlertActions'
-import toggleFetching from './toggleFetching';
+import axios from "axios";
+import alertConfig from "./AlertActions";
+import toggleFetching from "./toggleFetching";
 
-import { message } from 'antd';
-
+import { message } from "antd";
 
 export const login = (loginForm) => {
-    return async (dispatch) => {
+  return async (dispatch) => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      method: "POST",
+    };
 
-        const config = {
-            headers: {
-              'Content-Type': 'application/json',
-              'Access-Control-Allow-Origin': '*',
-              },
-              method: 'POST'
-            }
+    const res = await axios.post(
+      `${process.env.SERVER_URL}/auth/login`,
+      loginForm,
+      config
+    );
 
-        
-                const res = await axios.post('http://localhost:8080/auth/login', loginForm, config);
+    console.log(res);
 
-                console.log(res);
+    if (res.data.status === "failure") {
+      message.error(`${res.data.message}`, 4);
+      dispatch(toggleFetching());
+    } else if (res.data.status === "success") {
+      const action = {
+        type: "LOGIN",
+        payload: res.data,
+      };
 
-                if(res.data.status === 'failure'){
-                    message.error(`${res.data.message}`, 4);
-                    dispatch(toggleFetching());
-                }
-                else if(res.data.status === 'success'){
-                    const action = {
-                        type: 'LOGIN',
-                        payload: res.data
-                    }
-            
+      dispatch(action);
 
-                    dispatch(action);
-    
-                    const alert = {
-                        message: "You have successfully logged in",
-                        type: "success"
-                    }
+      const alert = {
+        message: "You have successfully logged in",
+        type: "success",
+      };
 
-                    dispatch(alertConfig(alert));
-                }
-
-                
+      dispatch(alertConfig(alert));
     }
-}
+  };
+};
 
 export const logout = () => {
-    return async (dispatch, getState) => {
+  return async (dispatch, getState) => {
+    const token = getState().isLoggedIn.token;
 
-        const token = getState().isLoggedIn.token;
+    const options = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    };
 
-        const options = {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                }
-        }
+    await axios.get(`${process.env.SERVER_URL}/auth/logout`, options);
 
-        await axios.get('http://localhost:8080/auth/logout', options);
+    const action = {
+      type: "LOGOUT",
+    };
 
-        const action = {
-            type: 'LOGOUT'
-        }
+    message.success("Successfully logged you out", 4);
 
-        message.success("Successfully logged you out", 4);
+    dispatch(action);
+  };
+};
 
-        dispatch(action);
+export const switchPassword = (form) => {
+  return async (dispatch, getState) => {
+    const token = getState().isLoggedIn.token;
 
+    const options = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+    };
+
+    const res = await axios.patch(
+      `${process.env.SERVER_URL}/auth/changePassword`,
+      form,
+      options
+    );
+
+    if (res.data.status === "failure") {
+      const alert = {
+        message:
+          "There was an error changing your password, try again in a bit",
+        type: "error",
+      };
+
+      dispatch(alertConfig(alert));
+    } else if (res.data.status === "success") {
+      const alert = {
+        message: "Your password was changed successfully",
+        type: "success",
+      };
+
+      dispatch(alertConfig(alert));
+      dispatch(logout());
     }
-}
+  };
+};

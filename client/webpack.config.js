@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
-const Dotenv = require('dotenv-webpack');
+const Dotenv = require("dotenv-webpack");
 
 module.exports = {
   entry: ["@babel/polyfill", "./src/index.js"], // Polyfill for async functionality
@@ -23,7 +23,7 @@ module.exports = {
         test: /\.svg$/,
         use: [
           {
-            loader: 'svg-url-loader',
+            loader: "svg-url-loader",
             options: {
               limit: 10000,
             },
@@ -34,7 +34,7 @@ module.exports = {
         test: /\.(png|jpe?g|gif)$/i,
         use: [
           {
-            loader: 'file-loader',
+            loader: "file-loader",
           },
         ],
       },
@@ -55,10 +55,22 @@ module.exports = {
           { loader: "style-loader" },
           { loader: "css-loader" },
           //    AntdScssThemePlugin.themify('less-loader') // Plugin for theming ant
-          { loader: "less-loader",
+          {
+            loader: "less-loader",
             options: {
-              javascriptEnabled: true
-            }  
+              javascriptEnabled: true,
+              modifyVars: {
+                // "primary-color": "#0070ba", // primary color for all components
+                // "link-color": "#0070ba", // link color
+                // "success-color": "#52c41a", // success state color
+                // "warning-color": "#faad14", // warning state color
+                // "error-color": "#f5222d", // error state color
+                // "font-size-base": "14px", // major text font size
+                "border-radius-base": "6px", // major border radius
+                // "border-color-base": "#d9d9d9", // major border color
+                // "box-shadow-base": "0 2px 8px rgba(0, 0, 0, 0.15)", // major shadow for layers
+              }
+            },
           },
         ],
       },
@@ -84,7 +96,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./src/index.html",
     }),
-    new Dotenv()
+    new Dotenv(),
     // new AntdScssThemePlugin(path.join(__dirname, "src", "ant-overrides.scss")),
   ],
 };

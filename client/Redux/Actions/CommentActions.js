@@ -17,7 +17,7 @@ export const CreateComment = (content, itemId) => {
             }
         }
 
-        const res = await axios.post(`http://localhost:8080/products/comments/${itemId}/create`, content, options);
+        const res = await axios.post(`${process.env.SERVER_URL}/products/comments/${itemId}/create`, content, options);
 
         if(res.data.status === 'success'){
             message.success('Your comment was created', 4);

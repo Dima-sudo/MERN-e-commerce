@@ -13,7 +13,7 @@ import {
 } from "antd";
 import {
   UploadOutlined,
-  LaptopOutlined,
+  PhoneOutlined,
   HomeOutlined,
   UserOutlined,
 } from "@ant-design/icons";
@@ -31,7 +31,7 @@ import { createProduct, updateProduct } from "../Redux/Actions/ProductActions";
 import { getTags } from "../Utility/Forms";
 import { isNumeric } from '../Utility/Misc';
 
-class LaptopForm extends Component {
+class PhoneForm extends Component {
   constructor(props) {
     super(props);
 
@@ -47,9 +47,10 @@ class LaptopForm extends Component {
         title: "",
         description: "",
         price: "",
-        cpu: "",
-        graphics: "",
-        screen: "",
+        drivers: "",
+        frequency: "",
+        sensitivity: "",
+        color: ""
       };
     }
 
@@ -57,9 +58,10 @@ class LaptopForm extends Component {
       title: self.title,
       description: self.description,
       price: self.price,
-      cpu: self.cpu,
-      graphics: self.graphics,
-      screen: self.screen,
+      drivers: self.drivers,
+      frequency: self.frequency,
+      sensitivity: self.sensitivity,
+      color: self.color,
       files: [],
       hasSubmitted: false,
     };
@@ -85,8 +87,8 @@ class LaptopForm extends Component {
         </Breadcrumb.Item>
         <Breadcrumb.Item href="">
           <Space>
-            <LaptopOutlined />
-            Laptops
+            <PhoneOutlined />
+            Headphones
           </Space>
         </Breadcrumb.Item>
       </Breadcrumb>
@@ -99,9 +101,10 @@ class LaptopForm extends Component {
       this.state.title.length === 0 ||
       this.state.description.length === 0 ||
       this.state.price.length === 0 ||
-      this.state.cpu.length === 0 ||
-      this.state.graphics.length === 0 ||
-      this.state.screen.length === 0
+      this.state.drivers.length === 0 ||
+      this.state.frequency.length === 0 ||
+      this.state.sensitivity.length === 0 ||
+      this.state.color.length === 0
     ) {
       message.error("Fields cannot be empty", 4);
       return false;
@@ -123,32 +126,41 @@ class LaptopForm extends Component {
     } else if (+this.state.price <= 0 || isNumeric(this.state.price) === false) {
       message.error("The price should be a positive integer", 4);
       return false;
-    } else if (this.state.cpu.length < 6 || !this.state.cpu.includes(" ")) {
+    } else if (
+      this.state.drivers.length < 3
+    ) {
       message.error(
-        "The CPU field should include the brand and model name of the processor",
+        "The drivers field should include the brand and model name of the card",
         6
       );
       return false;
     } else if (
-      this.state.graphics.length < 6 ||
-      !this.state.graphics.includes(" ")
+      this.state.frequency.length < 5
     ) {
       message.error(
-        "The graphics field should include the brand and model name of the card",
-        6
-      );
-      return false;
-    } else if (
-      this.state.screen.length < 6 ||
-      !this.state.screen.includes(" ") ||
-      !this.state.screen.includes(":")
-    ) {
-      message.error(
-        "The screen field should include the brand and model name, in addition to a resolution in the for mat of XXXX:YYYY i.e 1920:1080",
+        "The frequency field should include the supported headphone's khz frequency. (i.e XXkhz-YYkhz)",
         8
       );
       return false;
     }
+    else if (
+        this.state.sensitivity.length < 5
+      ) {
+        message.error(
+          "The sensitivity field should contain the driver sensitivity. (i.e XXkhz/1mw)",
+          8
+        );
+        return false;
+      }
+      else if (
+        this.state.color.length < 3
+      ) {
+        message.error(
+          "The color field should be atleast 3 characters long.",
+          8
+        );
+        return false;
+      }
 
     return true;
   };
@@ -203,15 +215,16 @@ class LaptopForm extends Component {
     });
   };
 
-  submitLaptop = () => {
+  submitHeadphones = () => {
     if (this.isValidated()) {
       const form = {
         title: this.state.title,
         description: this.state.description,
         price: this.state.price,
-        cpu: this.state.cpu,
-        graphics: this.state.graphics,
-        screen: this.state.screen,
+        drivers: this.state.drivers,
+        frequency: this.state.frequency,
+        sensitivity: this.state.sensitivity,
+        color: this.state.color
       };
 
       form.tags = getTags(form);
@@ -232,14 +245,15 @@ class LaptopForm extends Component {
       if (this.props.location) {
         // Redux action creator
         const itemId = this.props.location.self._id;
-        this.props.updateProduct(itemId, formData, 'laptops');
+        this.props.updateProduct(itemId, formData, 'headphones');
 
         this.setState({ hasSubmitted: true });
       }
+
       // Else create a new product
       else {
         // Redux action creator
-        this.props.createProduct(formData, 'laptops');
+        this.props.createProduct(formData, 'headphones');
         // Passed from form CreateProduct component that manages all forms
         this.props.setFormSubmitted();
       }
@@ -255,10 +269,10 @@ class LaptopForm extends Component {
           <Form
             size="middle"
             name="create_form"
-            key="laptop_form_key"
+            key="headphones_form_key"
             className="create-form my-3"
             onFieldsChange={this.handleChange}
-            onFinish={this.submitLaptop}
+            onFinish={this.submitHeadphones}
             fields={[
               {
                 name: ["title"],
@@ -273,21 +287,25 @@ class LaptopForm extends Component {
                 value: this.state.price,
               },
               {
-                name: ["cpu"],
-                value: this.state.cpu,
+                name: ["drivers"],
+                value: this.state.drivers,
               },
               {
-                name: ["graphics"],
-                value: this.state.graphics,
+                name: ["frequency"],
+                value: this.state.frequency,
               },
               {
-                name: ["screen"],
-                value: this.state.screen,
+                name: ["sensitivity"],
+                value: this.state.sensitivity,
               },
+              {
+                name: ["color"],
+                value: this.state.color,
+              }
             ]}
-            onFinish={this.submitLaptop}
+            onFinish={this.submitHeadphones}
           >
-            <h1 className="create-form__title">Laptop Form</h1>
+            <h1 className="create-form__title">Headphones Form</h1>
 
             <Form.Item
               name="title"
@@ -301,7 +319,7 @@ class LaptopForm extends Component {
               rules={[
                 {
                   required: true,
-                  message: "Please fill out the laptop's description",
+                  message: "Please fill out the phone's description",
                 },
               ]}
             >
@@ -321,7 +339,7 @@ class LaptopForm extends Component {
               rules={[
                 {
                   required: true,
-                  message: "Please fill out the laptop's price",
+                  message: "Please fill out the phone's price",
                 },
               ]}
             >
@@ -329,39 +347,51 @@ class LaptopForm extends Component {
             </Form.Item>
 
             <Form.Item
-              name="cpu"
+              name="drivers"
               rules={[
                 {
                   required: true,
-                  message: "Please fill out the laptop's processor",
+                  message: "Please fill out the headphone's drivers",
                 },
               ]}
             >
-              <Input type="text" placeholder="CPU" />
+              <Input type="text" placeholder="Drivers" />
             </Form.Item>
 
             <Form.Item
-              name="graphics"
+              name="frequency"
               rules={[
                 {
                   required: true,
-                  message: "Please fill out the laptop's graphics",
+                  message: "Please fill out the headphone's frequency",
                 },
               ]}
             >
-              <Input type="text" placeholder="Graphics" />
+              <Input type="text" placeholder="Frequency" />
             </Form.Item>
 
             <Form.Item
-              name="screen"
+              name="sensitivity"
               rules={[
                 {
                   required: true,
-                  message: "Please fill out the laptop's screen",
+                  message: "Please fill out the headphone's sensitivity",
                 },
               ]}
             >
-              <Input type="text" placeholder="Screen" />
+              <Input type="text" placeholder="Sensitivity" />
+            </Form.Item>
+
+            <Form.Item
+              name="color"
+              rules={[
+                {
+                  required: true,
+                  message: "Please fill out the hphone's color",
+                },
+              ]}
+            >
+              <Input type="text" placeholder="Color" />
             </Form.Item>
 
             {/* Upload */}
@@ -407,5 +437,5 @@ const mapStateToProps = (store) => {
 };
 
 export default connect(mapStateToProps, { createProduct, updateProduct })(
-  LaptopForm
+  PhoneForm
 );

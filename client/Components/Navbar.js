@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Menu, Button, Alert } from "antd";
-import { RightOutlined, LoginOutlined, ToTopOutlined } from "@ant-design/icons";
+import { MenuOutlined, LoginOutlined, ToTopOutlined } from "@ant-design/icons";
 import toggleDrawer from "../Redux/Actions/toggleDrawer";
 import DrawerMenu from "../Components/DrawerMenu";
 import Viewed from '../Components/Viewed';
@@ -25,9 +25,7 @@ class Navbar extends React.Component {
           <Menu mode="horizontal" id="navbar__wrapper">
             <Menu.Item key="drawer_button" id="navbar-drawer__button">
               <Button onClick={this.handleClick}>
-                <span className="sidebar-icon__positioning">
-                  <RightOutlined />
-                </span>
+                  <MenuOutlined className="navbar-hamburger__positioning"/>
               </Button>
             </Menu.Item>
             <span />
@@ -73,9 +71,7 @@ class Navbar extends React.Component {
         <Menu mode="horizontal" className="navbar" id="navbar__wrapper">
           <Menu.Item key="drawer_button" id="navbar-drawer__button">
             <Button onClick={this.handleClick}>
-              <span className="sidebar-icon__positioning">
-                <RightOutlined />
-              </span>
+              <MenuOutlined className="navbar-hamburger__positioning"/>
             </Button>
           </Menu.Item>
           <span />

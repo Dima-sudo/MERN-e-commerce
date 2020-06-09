@@ -43,7 +43,7 @@ class SignUp extends Component {
   // Conditional of form and spinner animation
   renderForm = () => {
      if(this.props.isFetching === true){
-       return <div>Loading...</div>
+       return <div className="login-spinner__positioning my-5 py-5"><Spin size="large" /></div>
      }
      
      return (

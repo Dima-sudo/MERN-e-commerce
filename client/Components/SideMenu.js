@@ -1,6 +1,6 @@
 import React from "react";
 import { Drawer, Menu } from "antd";
-import { BulbOutlined, MessageOutlined, MailOutlined, ConsoleSqlOutlined, SearchOutlined } from "@ant-design/icons";
+import { BulbOutlined, MessageOutlined, MailOutlined, ConsoleSqlOutlined, FullscreenOutlined, SearchOutlined, PhoneOutlined, CustomerServiceOutlined, ShoppingOutlined } from "@ant-design/icons";
 
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -26,6 +26,22 @@ class SideMenu extends React.Component {
             <Menu.Item key="laptops_side_menu">
               <ConsoleSqlOutlined />
               <Link to="/products/laptops">Laptops</Link>
+            </Menu.Item>
+            <Menu.Item key="televisions" onClick={this.onClose}>
+              <FullscreenOutlined />
+              <Link to="/products/televisions">Televisions</Link>
+            </Menu.Item>
+            <Menu.Item key="phones" onClick={this.onClose}>
+              <PhoneOutlined />
+              <Link to="/products/phones">Phones</Link>
+            </Menu.Item>
+            <Menu.Item key="headphones" onClick={this.onClose}>
+              <CustomerServiceOutlined />
+              <Link to="/products/headphones">Headphones</Link>
+            </Menu.Item>
+            <Menu.Item key="other_items" onClick={this.onClose}>
+              <ShoppingOutlined />
+              <Link to="/products/others">Other</Link>
             </Menu.Item>
             </SubMenu>
 

@@ -1,3 +1,5 @@
+
+
 /**
  * @param {object} formObject - accepts a formObject with the form's field name and field value pairs.
  * @returns {[string]} - An array of filtered strings based on the form's input. Gets rid of punctuation
@@ -32,17 +34,16 @@ export const getTags = (formObject) => {
         /* 
           Item tags are generated based on the form input, the following loop attempts to get rid of conjunction words
           i.e (to, a, if, as) etc. and punctuation which can interfere with search results. This section can probably
-          be done more elegantly with regex or some sort of a dictionary and will be refactored later. 
+          be done more elegantly with regex or some sort of a dictionary, will look into that later. 
         */
 
         const tagsToAppend = e[1].split(' ');
 
-        const filteredTags = [];
+        let filteredTags = [];
 
         // Remove conjunction words
-        tagsToAppend.forEach((tag, index) => {
+        tagsToAppend.forEach((tag) => {
           if(tag.length < 4){
-            tagsToAppend.splice(index, 1);
             return;
           }
 
@@ -50,9 +51,9 @@ export const getTags = (formObject) => {
         const tagCharArray = Array.from(tag); 
 
         // Remove punctuation
-          if(tag.includes('!') || tag.includes('.') || tag.includes(',') || tag.includes('=') || tag.includes('-') || tag.includes(';')){
+          if(tag.includes('!') || tag.includes('.') || tag.includes(',') || tag.includes('=') || tag.includes('-') || tag.includes(';') || tag.includes('\'')){
             for(let i=0; i<tagCharArray.length; i++){
-              if(tagCharArray[i] === '!' || tagCharArray[i] === '.' || tagCharArray[i] === ',' || tagCharArray[i] === '=' || tagCharArray[i] === '-' || tagCharArray[i] ===';'){
+              if(tagCharArray[i] === '!' || tagCharArray[i] === '.' || tagCharArray[i] === ',' || tagCharArray[i] === '=' || tagCharArray[i] === '-' || tagCharArray[i] === ';' || tagCharArray[i] === '\''){
                 tagCharArray.splice(i, 1);
                 tag = tagCharArray.join(''); // Convert char array back to a string
                 // Going back one step is neccessary since we're removing all instances of the value and not once.
@@ -67,8 +68,9 @@ export const getTags = (formObject) => {
         //
 
                
-
         tags = [...tags, ...filteredTags];
+
+        filteredTags = [];
       })
 
       return tags;

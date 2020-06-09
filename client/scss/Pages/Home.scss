@@ -104,5 +104,31 @@ div{
 }
 
 
+.home-section__cards{
+    min-height: 70vh !important;
+
+    & h1{
+        font-size: 4rem;
+        color: $primary-light;
+        text-shadow: $text-shadow-slight;
+        text-align: center;
+    }
+}
+
+.item-wrapper__cards{
+    min-width: 100%;
+    min-height: inherit;
+    padding-top: 96px;
+}
+
+.content-position{
+    display: flex;
+    justify-content: center;
+    min-height: 400px;
+}
+
+.card-section__wrapper {
+    background: $background-light-grey;
+}
 
 

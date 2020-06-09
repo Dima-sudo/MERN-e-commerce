@@ -13,12 +13,12 @@ import {
 } from "antd";
 import {
   UploadOutlined,
-  LaptopOutlined,
+  ShoppingOutlined,
   HomeOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 
-import { Redirect, Link } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 import "../scss/Pages/CreateProduct.scss";
 
@@ -47,9 +47,8 @@ class LaptopForm extends Component {
         title: "",
         description: "",
         price: "",
-        cpu: "",
-        graphics: "",
-        screen: "",
+        condition: "",
+        additionalInfo: ""
       };
     }
 
@@ -57,9 +56,8 @@ class LaptopForm extends Component {
       title: self.title,
       description: self.description,
       price: self.price,
-      cpu: self.cpu,
-      graphics: self.graphics,
-      screen: self.screen,
+      condition: self.condition,
+      additionalInfo: self.additionalInfo,
       files: [],
       hasSubmitted: false,
     };
@@ -85,8 +83,8 @@ class LaptopForm extends Component {
         </Breadcrumb.Item>
         <Breadcrumb.Item href="">
           <Space>
-            <LaptopOutlined />
-            Laptops
+            <ShoppingOutlined />
+            Other
           </Space>
         </Breadcrumb.Item>
       </Breadcrumb>
@@ -99,9 +97,8 @@ class LaptopForm extends Component {
       this.state.title.length === 0 ||
       this.state.description.length === 0 ||
       this.state.price.length === 0 ||
-      this.state.cpu.length === 0 ||
-      this.state.graphics.length === 0 ||
-      this.state.screen.length === 0
+      this.state.condition.length === 0 ||
+      this.state.additionalInfo.length === 0 
     ) {
       message.error("Fields cannot be empty", 4);
       return false;
@@ -123,28 +120,19 @@ class LaptopForm extends Component {
     } else if (+this.state.price <= 0 || isNumeric(this.state.price) === false) {
       message.error("The price should be a positive integer", 4);
       return false;
-    } else if (this.state.cpu.length < 6 || !this.state.cpu.includes(" ")) {
+    } else if (
+      this.state.condition.length < 3
+    ) {
       message.error(
-        "The CPU field should include the brand and model name of the processor",
+        "The condition field should include the item's condition",
         6
       );
       return false;
     } else if (
-      this.state.graphics.length < 6 ||
-      !this.state.graphics.includes(" ")
+      this.state.additionalInfo.length < 3
     ) {
       message.error(
-        "The graphics field should include the brand and model name of the card",
-        6
-      );
-      return false;
-    } else if (
-      this.state.screen.length < 6 ||
-      !this.state.screen.includes(" ") ||
-      !this.state.screen.includes(":")
-    ) {
-      message.error(
-        "The screen field should include the brand and model name, in addition to a resolution in the for mat of XXXX:YYYY i.e 1920:1080",
+        "The Additional Info field should include additional relevant information about the item",
         8
       );
       return false;
@@ -203,15 +191,14 @@ class LaptopForm extends Component {
     });
   };
 
-  submitLaptop = () => {
+  submitOther = () => {
     if (this.isValidated()) {
       const form = {
         title: this.state.title,
         description: this.state.description,
         price: this.state.price,
-        cpu: this.state.cpu,
-        graphics: this.state.graphics,
-        screen: this.state.screen,
+        condition: this.state.condition,
+        additionalInfo: this.state.additionalInfo,
       };
 
       form.tags = getTags(form);
@@ -232,14 +219,14 @@ class LaptopForm extends Component {
       if (this.props.location) {
         // Redux action creator
         const itemId = this.props.location.self._id;
-        this.props.updateProduct(itemId, formData, 'laptops');
+        this.props.updateProduct(itemId, formData, 'others');
 
         this.setState({ hasSubmitted: true });
       }
       // Else create a new product
       else {
         // Redux action creator
-        this.props.createProduct(formData, 'laptops');
+        this.props.createProduct(formData, 'others');
         // Passed from form CreateProduct component that manages all forms
         this.props.setFormSubmitted();
       }
@@ -255,7 +242,7 @@ class LaptopForm extends Component {
           <Form
             size="middle"
             name="create_form"
-            key="laptop_form_key"
+            key="other_form_key"
             className="create-form my-3"
             onFieldsChange={this.handleChange}
             onFinish={this.submitLaptop}
@@ -273,21 +260,17 @@ class LaptopForm extends Component {
                 value: this.state.price,
               },
               {
-                name: ["cpu"],
-                value: this.state.cpu,
+                name: ["condition"],
+                value: this.state.condition,
               },
               {
-                name: ["graphics"],
-                value: this.state.graphics,
-              },
-              {
-                name: ["screen"],
-                value: this.state.screen,
-              },
+                name: ["additionalInfo"],
+                value: this.state.additionalInfo,
+              }
             ]}
-            onFinish={this.submitLaptop}
+            onFinish={this.submitOther}
           >
-            <h1 className="create-form__title">Laptop Form</h1>
+            <h1 className="create-form__title">Other Form</h1>
 
             <Form.Item
               name="title"
@@ -305,7 +288,6 @@ class LaptopForm extends Component {
                 },
               ]}
             >
-              {/* <Input type="text" placeholder="Description" /> */}
 
               <TextArea
                 type="text"
@@ -329,39 +311,32 @@ class LaptopForm extends Component {
             </Form.Item>
 
             <Form.Item
-              name="cpu"
+              name="condition"
               rules={[
                 {
                   required: true,
-                  message: "Please fill out the laptop's processor",
+                  message: "Please fill out the item's condition",
                 },
               ]}
             >
-              <Input type="text" placeholder="CPU" />
+              <Input type="text" placeholder="What's the item's condition?" />
             </Form.Item>
 
             <Form.Item
-              name="graphics"
+              name="additionalInfo"
               rules={[
                 {
                   required: true,
-                  message: "Please fill out the laptop's graphics",
+                  message: "Please fill out any relevant additional information",
                 },
               ]}
             >
-              <Input type="text" placeholder="Graphics" />
-            </Form.Item>
-
-            <Form.Item
-              name="screen"
-              rules={[
-                {
-                  required: true,
-                  message: "Please fill out the laptop's screen",
-                },
-              ]}
-            >
-              <Input type="text" placeholder="Screen" />
+              <TextArea
+                type="text"
+                name="additionalInfo"
+                placeholder="Tell us more"
+                autoSize={{ minRows: 3, maxRows: 7 }}
+              />
             </Form.Item>
 
             {/* Upload */}

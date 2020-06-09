@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const fileUpload = require('express-fileupload');
 
+// Enables CORS requests
 const cors = require('cors');
 
 const miscRoutes = require('./Routes/miscRoutes');
@@ -13,9 +14,13 @@ const authRoutes = require('./Routes/authRoutes');
 const productRoutes = require('./Routes/productRoutes');
 const laptopRoutes = require('./Routes/laptopRoutes');
 const televisionRoutes = require('./Routes/televisionRoutes');
+const phoneRoutes = require('./Routes/phoneRoutes');
+const headphoneRoutes = require('./Routes/headphoneRoutes');
+const otherRoutes = require('./Routes/otherRoutes');
 const commentRoutes = require('./Routes/commentRoutes');
 
 const DB = require('./Utility/DB_Connect');
+
 
 
 DB.connect();
@@ -28,13 +33,16 @@ app.use(cors());
 // Files are saved to the cloud on not to the server so this is used instead of multer/formidable
 app.use(fileUpload({
     useTempFiles: true
-}))
+}));
 
 // Routes
 app.use('/misc', miscRoutes);
 app.use('/products/comments', commentRoutes);
+app.use('/products/Headphones', headphoneRoutes);
+app.use('/products/phones', phoneRoutes);
 app.use('/products/televisions', televisionRoutes);
 app.use('/products/laptops', laptopRoutes);
+app.use('/products/others', otherRoutes);
 app.use('/products', productRoutes);
 app.use('/posts', postRoutes);
 app.use('/auth', authRoutes);
@@ -45,5 +53,5 @@ app.use('/auth', authRoutes);
 
 app.listen(process.env.PORT, () => {
     console.log(`Listening on port ${process.env.PORT}`);
-})
+});
 

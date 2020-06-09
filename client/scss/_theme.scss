@@ -1,8 +1,10 @@
 $primary: #0070ba;
 $primary-light: rgba(0, 112, 186, 0.85);
+$primary-lighter: rgb(177, 218, 245);
 $secondary: #003087;
 $light: #f5f7fa;
 $background-light: #f7f9fa;
+$background-light-grey: #f0f2f5;
 $background-dark: #333333;
 $black: #2c2e2f;
 $main-font: 'Roboto', sans-serif;
@@ -17,6 +19,21 @@ $text-lighter-secondary: rgba(0,0,0,0.25);
     background: radial-gradient(circle, $primary 12%, $secondary 85%);
 }
 
+/**
+*   Minor application-wide ant-design css adjustments are here
+*/
+
+// Cards and tags
+span.ant-tag.ant-tag-blue{
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+div.ant-card-head-wrapper{
+    display: flex;
+    justify-content: center;
+}
+
 div.ant-card-head-title{
     color: rgba(0,0,0,0.65);
 }
@@ -26,14 +43,36 @@ td a {
     cursor: auto;
 }
 
+// App-wide slight alert modifications
+.alert-text__positioning {
+    text-align: center;
+    z-index: 10;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100vw;
+}
+
+.ant-alert-icon{
+    padding-left: 16px;
+}
+
 div.ant-message-notice-content{
     margin-top: 3.5rem;
     
 }
 
-
+// Basic entrance animations
 .slide-in{
     animation: slide-in 0.6s ease-out;
+}
+
+.slide-in-side{
+    animation: slide-in-side 0.6s ease-out;
+}
+
+.slide-in-right{
+    animation: slide-in-right 0.6s ease-out;
 }
 
 @keyframes slide-in{
@@ -45,4 +84,64 @@ div.ant-message-notice-content{
         opacity: 1;
         transform: translateY(0px);
     }
+}
+
+@keyframes slide-in-side{
+    from{
+        opacity: 0;
+        transform: translatex(-50px);
+    }
+    to{
+        opacity: 1;
+        transform: translatex(0px);
+    }
+}
+
+@keyframes slide-in-right{
+    from{
+        opacity: 0;
+        transform: translatex(50px);
+    }
+    to{
+        opacity: 1;
+        transform: translatex(0px);
+    }
+}
+
+
+  // Attention grab animation
+  @keyframes attention-wobble {
+    0% {
+      -webkit-transform: scale3d(1, 1, 1);
+              transform: scale3d(1, 1, 1);
+    }
+    30% {
+      -webkit-transform: scale3d(1.25, 0.75, 1);
+              transform: scale3d(1.25, 0.75, 1);
+    }
+    40% {
+      -webkit-transform: scale3d(0.75, 1.25, 1);
+              transform: scale3d(0.75, 1.25, 1);
+    }
+    50% {
+      -webkit-transform: scale3d(1.15, 0.85, 1);
+              transform: scale3d(1.15, 0.85, 1);
+    }
+    65% {
+      -webkit-transform: scale3d(0.95, 1.05, 1);
+              transform: scale3d(0.95, 1.05, 1);
+    }
+    75% {
+      -webkit-transform: scale3d(1.05, 0.95, 1);
+              transform: scale3d(1.05, 0.95, 1);
+    }
+    100% {
+      -webkit-transform: scale3d(1, 1, 1);
+              transform: scale3d(1, 1, 1);
+    }
+  }
+  
+  .attention-wobble {
+	-webkit-animation: attention-wobble 0.9s both;
+	        animation: attention-wobble 0.9s both;
 }

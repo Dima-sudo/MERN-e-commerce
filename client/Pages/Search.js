@@ -108,6 +108,7 @@ class Search extends Component {
               <Space size="small">
                 {/* Conditional rendering */}
                 <Button type="primary" htmlType="submit">
+                  <SearchOutlined />
                   Search
                 </Button>
                 <Button type="secondary">

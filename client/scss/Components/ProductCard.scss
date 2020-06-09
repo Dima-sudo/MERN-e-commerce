@@ -1,3 +1,13 @@
 @import '../theme';
 @import '../utility';
 
+.card-tag__section{
+    display: flex;
+    justify-content: center;
+}
+
+.card-image{
+    padding: 4px;
+    margin-left: auto;
+    margin-right: auto;
+}

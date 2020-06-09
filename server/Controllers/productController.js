@@ -17,6 +17,35 @@ cloudinary.config({
 });
 
 /**
+ * @returns a list of products that the requesting user has purchased
+ */
+exports.getPurchases = async (req, res) => {
+  try {
+    const user = await User.findById({ _id: req.User.id }).populate(
+      "purchases"
+    );
+    if (!user || user.purchases.length === 0) {
+      return res.status(200).json({
+        message: "No purchases found",
+        products: "null",
+        status: "success",
+      });
+    }
+    return res.status(200).json({
+      message: "Purchases found",
+      products: user.purchases,
+      status: "success",
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Error fetching user purchases",
+      error: err.message,
+      status: "failure",
+    });
+  }
+};
+
+/**
  * @returns a list of products that match the value queried by the user
  */
 exports.query = async (req, res) => {
@@ -35,35 +64,34 @@ exports.query = async (req, res) => {
 
   try {
     // Splits the user input into an array and looks for matching tags
-    const products = await AbstractProduct.find({ tags: { $in: queryData } }).populate("createdBy comments")
-    .populate({
-      path: "comments",
-      populate: {
-        path: "createdBy",
-        model: "User",
-      },
-    });;
+    const products = await AbstractProduct.find({ tags: { $in: queryData } })
+      .populate("createdBy comments")
+      .populate({
+        path: "comments",
+        populate: {
+          path: "createdBy",
+          model: "User",
+        },
+      });
 
     if (!products || products.length === 0)
-      return res
-        .status(200)
-        .json({ message: "No products were found", products: "null", status: "success" });
-
-    return res
-      .status(200)
-      .json({
-        message: "Products found",
-        products: products,
+      return res.status(200).json({
+        message: "No products were found",
+        products: "null",
         status: "success",
       });
+
+    return res.status(200).json({
+      message: "Products found",
+      products: products,
+      status: "success",
+    });
   } catch (err) {
-    return res
-      .status(500)
-      .json({
-        message: "Error searching for the requested query",
-        error: err.message,
-        status: "failure",
-      });
+    return res.status(500).json({
+      message: "Error searching for the requested query",
+      error: err.message,
+      status: "failure",
+    });
   }
 };
 
@@ -75,7 +103,9 @@ exports.checkout = async (req, res) => {
   let customer = null;
 
   try {
-    const user = await User.findById({ _id: req.User.id });
+    const user = await (await User.findById({ _id: req.User.id })).populate(
+      "purchases"
+    );
 
     if (!user)
       return res
@@ -120,6 +150,17 @@ exports.checkout = async (req, res) => {
     console.log(charge);
 
     if (charge.status === "succeeded") {
+      console.log("Purchase successful, updating user's history: ");
+      console.log(user);
+
+      // Push purchased item into the user's purchase history
+      await User.findByIdAndUpdate(
+        { _id: user._id },
+        { purchases: [...user.purchases, product] },
+        { useFindAndModify: false }
+      );
+      //
+
       return res.status(200).json({
         message: "Payment process complete",
         charge: charge,

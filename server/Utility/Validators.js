@@ -2,6 +2,8 @@ const Television = require("../Models/Television");
 const Laptop = require("../Models/Laptop");
 const User = require("../Models/User");
 
+
+
 exports.validate_Account_Creation_Form = async (req, res, next) => {
   const { email, password, confirmPassword } = req.body;
 
@@ -197,20 +199,6 @@ exports.validate_Television_Creation_Form = async (req, res, next) => {
       status: "failure",
     });
   
-  // #TODO redo this section because of change in how tags are constructed
-  // Check that if tags are passed, are in proper format
-  if (form.tags) {
-    if (!Array.isArray(form.tags)) {
-      return res
-        .status(400)
-        .json({
-          message: "Tags are not passed in proper format",
-          error: "Not a String array",
-          status: "failure",
-        });
-    }
-  }
-
   next();
   //
 };
@@ -252,4 +240,205 @@ exports.validate_Files = async (req, res, next) => {
   } else if (!req.files) {
     next();
   }
+};
+
+exports.validate_Phone_Creation_Form = async (req, res, next) => {
+  const form = req.body;
+
+  // Validation
+  if (
+    !form.title ||
+    !form.description ||
+    !form.price ||
+    !form.cpu ||
+    !form.graphics ||
+    !form.screen ||
+    !form.OS
+  ) {
+    return res.status(400).json({
+      message: "One of the required fields was not provided",
+      error: "Missing form information",
+      status: "failure",
+    });
+  }
+  if (form.price <= 0) {
+    return res.status(400).json({
+      message: "Price must be a positive integer",
+      error: "Invalid form input",
+      status: "failure",
+    });
+  }
+  if (form.title.length < 6 || !form.title.includes(" "))
+    return res.status(400).json({
+      message: "Incomplete title. Enter brand name and model",
+      error: "Invalid title",
+      status: "failure",
+    });
+  if (form.description.length < 10 || !form.title.includes(" "))
+    return res.status(400).json({
+      message: "Description cannot be shorter than 10 characters",
+      error: "Invalid description",
+      status: "failure",
+    });
+  if (form.cpu.length < 6 || !form.title.includes(" "))
+    return res.status(400).json({
+      message: "Incorrect or incomplete CPU field. Enter brand name and model",
+      error: "Invalid CPU",
+      status: "failure",
+    });
+  if (form.graphics.length < 6)
+    return res.status(400).json({
+      message:
+        "Incorrect or incomplete graphics field. Enter brand name and model",
+      error: "Invalid graphics",
+      status: "failure",
+    });
+  if (!form.screen.includes(":"))
+    return res.status(400).json({
+      message:
+        "Screen field must include resolution in Width:Height format, i.e 1920:1080.",
+      error: "Invalid screen",
+      status: "failure",
+    });
+  if (form.screen.length < 6)
+    return res.status(400).json({
+      message: "Screen cannot be shorter than 6 characters",
+      error: "Invalid screen",
+      status: "failure",
+    });
+  if(form.OS.length < 3){
+    return res.status(400).json({
+      message: "OS cannot be shorter than 3 characters",
+      error: "Invalid OS",
+      status: "failure",
+    });
+  }
+
+  next();
+  //
+};
+
+exports.validate_Headphones_Creation_Form = async (req, res, next) => {
+  const form = req.body;
+
+  // Validation
+  if (
+    !form.title ||
+    !form.description ||
+    !form.price ||
+    !form.drivers ||
+    !form.frequency ||
+    !form.sensitivity ||
+    !form.color
+  ) {
+    return res.status(400).json({
+      message: "One of the required fields was not provided",
+      error: "Missing form information",
+      status: "failure",
+    });
+  }
+  if (form.price <= 0) {
+    return res.status(400).json({
+      message: "Price must be a positive integer",
+      error: "Invalid form input",
+      status: "failure",
+    });
+  }
+  if (form.title.length < 6 || !form.title.includes(" "))
+    return res.status(400).json({
+      message: "Incomplete title. Enter brand name and model",
+      error: "Invalid title",
+      status: "failure",
+    });
+  if (form.description.length < 10 || !form.title.includes(" "))
+    return res.status(400).json({
+      message: "Description cannot be shorter than 10 characters",
+      error: "Invalid description",
+      status: "failure",
+    });
+  if (form.drivers.length < 3)
+    return res.status(400).json({
+      message: "Incorrect or incomplete Drivers field. Must include the size.",
+      error: "Invalid drivers",
+      status: "failure",
+    });
+  if (form.frequency.length < 5)
+    return res.status(400).json({
+      message:
+        "Incorrect or incomplete frequency field. Enter the KHz range. (i.e XXkhz-YYkhz)",
+      error: "Invalid frequency",
+      status: "failure",
+    });
+    if (form.sensitivity.length < 5)
+    return res.status(400).json({
+      message:
+        "Incorrect or incomplete sensitivity field.",
+      error: "Invalid sensitivity",
+      status: "failure",
+    });
+  
+  if (form.color.length < 3)
+    return res.status(400).json({
+      message: "Color cannot be shorter than 3 characters",
+      error: "Invalid color",
+      status: "failure",
+    });
+
+  next();
+  //
+};
+
+exports.validate_Other_Creation_Form = async (req, res, next) => {
+  const form = req.body;
+
+  // Validation
+  if (
+    !form.title ||
+    !form.description ||
+    !form.price ||
+    !form.condition ||
+    !form.additionalInfo
+  ) {
+    return res.status(400).json({
+      message: "One of the required fields was not provided",
+      error: "Missing form information",
+      status: "failure",
+    });
+  }
+  if (form.price <= 0) {
+    return res.status(400).json({
+      message: "Price must be a positive integer",
+      error: "Invalid form input",
+      status: "failure",
+    });
+  }
+  if (form.title.length < 6 || !form.title.includes(" "))
+    return res.status(400).json({
+      message: "Incomplete title. Enter brand name and model",
+      error: "Invalid title",
+      status: "failure",
+    });
+  if (form.description.length < 10 || !form.title.includes(" "))
+    return res.status(400).json({
+      message: "Description cannot be shorter than 10 characters",
+      error: "Invalid description",
+      status: "failure",
+    });
+  if (form.condition.length < 3)
+    return res.status(400).json({
+      message: "Incorrect or incomplete condition field. Must include atleast 3 characters.",
+      error: "Invalid item condition",
+      status: "failure",
+    });
+  if (form.additionalInfo.length < 3)
+    return res.status(400).json({
+      message:
+        "Incorrect or incomplete additionalInfo field. Must include atleast 3 characters.",
+      error: "Invalid additionalInfo",
+      status: "failure",
+    });
+    
+
+  next();
+  //
 };

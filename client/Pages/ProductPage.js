@@ -104,7 +104,7 @@ class ProductPage extends Component {
         'Thanks for making this purchase. We\'re working on your request and you should receive a confirmation notification in just a moment',
       icon: <SmileOutlined style={{ color: '#0070ba' }} />,
     });
-    //#108ee9 alt blue
+    
     
     const res = await axios.post(`${process.env.SERVER_URL}/products/${self._id}/checkout`, token, options);
 

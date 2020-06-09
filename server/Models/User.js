@@ -28,7 +28,6 @@ const userSchema = new Schema({
     type: [{
       type: Schema.Types.ObjectId,
       ref: 'AbstractProduct',
-      required: false,
     }],
     default: []
   }

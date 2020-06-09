@@ -1,8 +1,11 @@
 
+import React from 'react';
+
 import axios from 'axios';
 import alertConfig from './AlertActions'
 
-import { message } from 'antd';
+import { message, notification } from 'antd';
+import { InfoOutlined } from '@ant-design/icons'
 
 
 export const search = (query) => {
@@ -15,10 +18,9 @@ export const search = (query) => {
             }
         }
 
-        console.log("Inside search action creator");
         console.log(query);
         const res = await axios.get(`${process.env.SERVER_URL}/products/search/${query}`, options);
-        console.log("Finished request");
+        console.log("Finished query request");
         console.log(res);
 
         if(res.data.status === 'success'){
@@ -42,7 +44,7 @@ export const search = (query) => {
     }
 }
 
-export const updateLaptop = (itemId, formData) => {
+export const updateProduct = (itemId, formData, category) => {
     return async (dispatch, getState) => {
         const token = getState().isLoggedIn.token;
 
@@ -53,11 +55,11 @@ export const updateLaptop = (itemId, formData) => {
                 }
         }
 
-        const res = await axios.put(`${process.env.SERVER_URL}/products/laptops/${itemId}/update`, formData, options)
+        const res = await axios.put(`${process.env.SERVER_URL}/products/${category}/${itemId}/update`, formData, options)
         console.log(res)
 
         if(res.data.status === 'success'){
-            message.success('The Laptop listing was updated', 4);
+            message.success('The listing was updated', 4);
         }
         else if(res.data.status === 'failure'){
             message.warning('Whoops! there was a problem updating that. Working on a fix.', 4);
@@ -65,7 +67,7 @@ export const updateLaptop = (itemId, formData) => {
     }
 }
 
-export const deleteLaptop = (itemId) => {
+export const deleteProduct = (itemId, category) => {
     return async (dispatch, getState) => {
         const token = getState().isLoggedIn.token;
 
@@ -76,7 +78,7 @@ export const deleteLaptop = (itemId) => {
                 }
         }
 
-        const res = await axios.delete(`${process.env.SERVER_URL}/products/laptops/${itemId}/delete`, options)
+        const res = await axios.delete(`${process.env.SERVER_URL}/products/${category}/${itemId}/delete`, options)
         console.log(res)
 
         if(res.data.status === 'success'){
@@ -88,6 +90,29 @@ export const deleteLaptop = (itemId) => {
         
         // Refresh the store
         dispatch(getListings());
+    }
+}
+
+export const getPurchases = () => {
+    return async (dispatch, getState) => {
+
+        const token = getState().isLoggedIn.token;  
+
+        const options = {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Access-Control-Allow-Origin': '*'
+                }
+        }
+
+        const res = await axios.get(`${process.env.SERVER_URL}/products/getpurchases`, options);
+
+        const action = {
+            type: 'USER_PURCHASES',
+            payload: res.data.products
+        }
+
+        dispatch(action);
     }
 }
 
@@ -141,8 +166,17 @@ export const getLaptops = () => {
 }
 
 
-export const createLaptop = (formData) => {
+export const createProduct = (formData, category) => {
     return async (dispatch, getState) => {
+
+        // Notification that dissapears after a few seconds
+        notification.open({
+        message: 'Working on it',
+        description:
+          'Hold on, we\'re working on it. This process might take a few moments',
+        icon: <InfoOutlined style={{ color: '#0070ba' }} />,
+        
+        });
         
         const token = getState().isLoggedIn.token;
 
@@ -154,13 +188,76 @@ export const createLaptop = (formData) => {
                 }
         }
 
-        await axios.post(`${process.env.SERVER_URL}/products/laptops/create`, formData, options);
+        const res = await axios.post(`${process.env.SERVER_URL}/products/${category}/create`, formData, options);
+        
+        let alert = null;
 
-        const alert = {
-            message: "Your laptop listing was created",
-            type: "success"
+        if(res.data.status === 'success'){
+            alert = {
+                message: "Your listing has been created",
+                type: "success"
+            }
         }
+        else if(res.data.status === 'failure'){
+            alert = {
+                message: "Error creating the listing",
+                type: "error"
+            }
+        }
+        
 
         dispatch(alertConfig(alert));
+    }
+}
+
+export const getTelevisions = () => {
+    return async (dispatch) => {
+        const res = await axios.get(`${process.env.SERVER_URL}/products/televisions`, {method: "GET"})
+        
+        const action = {
+            type: 'TELEVISION_LIST',
+            payload: res.data.products
+        }
+
+        dispatch(action);
+    }
+}
+
+export const getPhones = () => {
+    return async (dispatch) => {
+        const res = await axios.get(`${process.env.SERVER_URL}/products/phones`, {method: "GET"})
+        
+        const action = {
+            type: 'PHONE_LIST',
+            payload: res.data.products
+        }
+
+        dispatch(action);
+    }
+}
+
+export const getHeadphones = () => {
+    return async (dispatch) => {
+        const res = await axios.get(`${process.env.SERVER_URL}/products/headphones`, {method: "GET"})
+        
+        const action = {
+            type: 'HEADPHONES_LIST',
+            payload: res.data.products
+        }
+
+        dispatch(action);
+    }
+}
+
+export const getOthers = () => {
+    return async (dispatch) => {
+        const res = await axios.get(`${process.env.SERVER_URL}/products/others`, {method: "GET"})
+        
+        const action = {
+            type: 'OTHER_LIST',
+            payload: res.data.products
+        }
+
+        dispatch(action);
     }
 }

@@ -4,7 +4,7 @@ import HistoryItem from "../Components/HistoryItem";
 import "../scss/Pages/Profile.scss";
 
 import { connect } from "react-redux";
-import { getListings } from "../Redux/Actions/ProductActions";
+import { getListings, getPurchases } from "../Redux/Actions/ProductActions";
 
 import { Empty } from "antd";
 
@@ -29,6 +29,7 @@ import SetModal from '../Redux/Actions/ModalActions';
 
 class Profile extends Component {
 
+  // Shows confirmation modal
   popConfirmDeactivate = () => {
     this.props.SetModal({
       title: 'Confirm Account Deactivation',
@@ -37,6 +38,7 @@ class Profile extends Component {
     })
   }
 
+  // Actual account deactivation request
   deactivateAccount = async () => {
   
       const options = {
@@ -50,13 +52,44 @@ class Profile extends Component {
      return res;
   }
 
-  componentWillReceiveProps() {
-    this.forceUpdate();
+  shouldComponentUpdate(nextProps, nextState){
+    if(this.props.UserListings === nextProps.UserListings){
+      return false;
+    }
+    return true;
   }
 
   renderPurchases = () => {
-    if (!this.props.purchases) {
+    if (!this.props.UserPurchases) {
       return <Empty description="No Data" />;
+    }
+
+    if (this.props.UserPurchases) {
+      const list = this.props.UserPurchases;
+
+      return list.map((item) => {
+        let image = null;
+        // Formatting
+        let unformattedDate = item.created.split("T")[0].split('-');
+        let date = `${unformattedDate[2]}/${unformattedDate[1]}/${unformattedDate[0]}`;
+        //
+
+        // If an image exists get the url. The component knows how to handle cases with no image
+        if (item.images.length > 0) image = item.images[0].url;
+
+        return (
+          <HistoryItem
+            title={item.title}
+            date={date}
+            price={item.price}
+            description={item.description}
+            image={image}
+            self={item}
+            key={uuid()}
+            variant='display'
+          />
+        );
+      });
     }
   };
 
@@ -92,7 +125,10 @@ class Profile extends Component {
   };
 
   componentDidMount() {
-    this.props.getListings();
+    if(this.props.isLoggedIn){
+      this.props.getListings();
+      this.props.getPurchases();
+    }
   }
 
   renderBreadcrumb = () => {
@@ -120,7 +156,7 @@ class Profile extends Component {
 
         <CustomModal action={this.deactivateAccount} />
 
-        <Card title={this.renderBreadcrumb()} className="user-panel mt-5">
+        <Card title={this.renderBreadcrumb()} className="user-panel mt-5 slide-in">
           <Button
             shape="round"
             className="user-panel__button"
@@ -141,7 +177,9 @@ class Profile extends Component {
             className="user-panel__button"
             size="large"
           >
-            Reset Password
+            <Link to="/change-password">
+              Change Password
+            </Link>
           </Button>
           <Button
             shape="round"
@@ -154,7 +192,7 @@ class Profile extends Component {
           </Button>
         </Card>
 
-        <Card className="mt-5">
+        <Card className="mt-5 slide-in-side">
           <Tabs>
 
             <TabPane tab="My Listings" key="history-tab-key">
@@ -181,8 +219,8 @@ class Profile extends Component {
 
 const mapStateToProps = (store) => {
   return {
-    UserListings: store.Products.UserListings, isLoggedIn: store.isLoggedIn
+    UserListings: store.Products.UserListings, isLoggedIn: store.isLoggedIn, UserPurchases: store.Products.UserPurchases
   };
 };
 
-export default connect(mapStateToProps, { getListings, SetModal })(Profile);
+export default connect(mapStateToProps, { getListings, getPurchases, SetModal })(Profile);

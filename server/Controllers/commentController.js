@@ -20,6 +20,7 @@ exports.create = async (req, res) => {
     await comment.save();
     await foundProduct.comments.push(comment);
     await foundProduct.save();
+    
     return res
       .status(201)
       .json({
