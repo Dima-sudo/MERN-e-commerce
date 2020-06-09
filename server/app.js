@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 require('dotenv').config();
+const path = require('path');
 
 const fileUpload = require('express-fileupload');
 
@@ -18,6 +19,8 @@ const phoneRoutes = require('./Routes/phoneRoutes');
 const headphoneRoutes = require('./Routes/headphoneRoutes');
 const otherRoutes = require('./Routes/otherRoutes');
 const commentRoutes = require('./Routes/commentRoutes');
+
+const PORT = process.env.PORT || 8080;
 
 const DB = require('./Utility/DB_Connect');
 
@@ -49,9 +52,18 @@ app.use('/auth', authRoutes);
 
 
 
+// Serve static assets in production
+if(process.env.NODE_ENV === 'production'){
+    // Set a static folder
+    app.use(express.static(path.resolve(__dirname, '../', 'client', 'dist')))
+}
 
 
-app.listen(process.env.PORT, () => {
-    console.log(`Listening on port ${process.env.PORT}`);
+
+app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, '../', 'client', 'dist', 'index.html'));
+    })
 });
 
