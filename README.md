@@ -2,7 +2,7 @@
 # LIVE VERSION: http://mern-commerce-deploy.herokuapp.com/
 
 # e-commerce-app
-A social e-commerce app built with Node.js, React and MongoDB
+A social e-commerce app built with Node.js, React, MongoDB and Webpack.
 
 Main Features:
 - Credit Card payments
