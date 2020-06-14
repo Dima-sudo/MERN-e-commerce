@@ -167,6 +167,24 @@ class TelevisionForm extends Component {
     );
   };
 
+  renderBackButton = () => {
+    if(this.props.location){
+      return(
+      <Button type="secondary">
+        <Link to="/profile">
+          Back
+        </Link>
+      </Button>
+        )
+    }
+
+    return(
+      <Button type="secondary" onClick={this.props.resetForm}>
+                  Back
+      </Button>
+    )
+  }
+
   // Disables the submit button and shows a warning message when there's more than 3 items uploaded
   renderSubmitButton = () => {
     if (this.state.files.length > 3) {
@@ -389,9 +407,7 @@ class TelevisionForm extends Component {
               <Space size="small">
                 {/* Conditional rendering */}
                 {this.renderSubmitButton()}
-                <Button type="secondary" onClick={this.props.resetForm}>
-                  Back
-                </Button>
+                {this.renderBackButton()}
               </Space>
             </Form.Item>
           </Form>

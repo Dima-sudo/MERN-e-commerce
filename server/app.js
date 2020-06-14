@@ -20,7 +20,7 @@ const headphoneRoutes = require('./Routes/headphoneRoutes');
 const otherRoutes = require('./Routes/otherRoutes');
 const commentRoutes = require('./Routes/commentRoutes');
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || process.env.DEV_PORT;
 
 const DB = require('./Utility/DB_Connect');
 
@@ -55,7 +55,7 @@ app.use('/auth', authRoutes);
 // Serve static assets in production
 if(process.env.NODE_ENV === 'production'){
     // Set a static folder
-    app.use(express.static(path.resolve(__dirname, '../', 'client', 'dist')))
+    app.use(express.static('client/dist'))
 }
 
 

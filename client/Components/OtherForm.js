@@ -18,7 +18,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 
-import { Redirect } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 
 import "../scss/Pages/CreateProduct.scss";
 
@@ -155,6 +155,24 @@ class LaptopForm extends Component {
       </Button>
     );
   };
+
+  renderBackButton = () => {
+    if(this.props.location){
+      return(
+      <Button type="secondary">
+        <Link to="/profile">
+          Back
+        </Link>
+      </Button>
+        )
+    }
+
+    return(
+      <Button type="secondary" onClick={this.props.resetForm}>
+                  Back
+      </Button>
+    )
+  }
 
   // Disables the submit button and shows a warning message when there's more than 3 items uploaded
   renderSubmitButton = () => {
@@ -365,9 +383,7 @@ class LaptopForm extends Component {
               <Space size="small">
                 {/* Conditional rendering */}
                 {this.renderSubmitButton()}
-                <Button type="secondary" onClick={this.props.resetForm}>
-                  Back
-                </Button>
+                {this.renderBackButton()}
               </Space>
             </Form.Item>
           </Form>

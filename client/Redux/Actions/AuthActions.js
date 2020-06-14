@@ -20,8 +20,6 @@ export const login = (loginForm) => {
       config
     );
 
-    console.log(res);
-
     if (res.data.status === "failure") {
       message.error(`${res.data.message}`, 4);
       dispatch(toggleFetching());

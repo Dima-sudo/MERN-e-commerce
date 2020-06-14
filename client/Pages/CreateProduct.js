@@ -62,7 +62,7 @@ class CreateProduct extends Component {
     } 
     else if (this.state.category === null) {
       return (
-        <Card className="my-5" title="Create Product">
+        <Card className="my-5 slide-in" title="Create Product">
           <Form
             name="product_category"
             key="category_select"

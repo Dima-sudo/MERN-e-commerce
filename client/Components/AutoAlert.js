@@ -44,7 +44,7 @@ class AutoAlert extends Component {
       this.setState({ show: true });
       }, 2000);
 
-    }, 4000);
+    }, 3000);
 
     
 
@@ -59,7 +59,6 @@ class AutoAlert extends Component {
           from={{ opacity: 0, transform: "translate3d(0,-200px,0)" }}
           enter={{ opacity: 1, transform: "translate3d(0,0,0)" }}
           leave={{ opacity: 0, transform: "translate3d(0,-200px,0)" }}
-          // key={uuid()}
         >
           {(show) => show && ((props) => <Alert
               message={this.props.alert.message}

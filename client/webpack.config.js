@@ -44,8 +44,7 @@ module.exports = {
           { loader: "style-loader" },
           { loader: "css-loader" },
           // Loads in reverse: sass > css > style
-          //   AntdScssThemePlugin.themify('sass-loader')
-          { loader: "sass-loader" },
+          { loader: "sass-loader" }
         ],
       },
       // Less for antdesign
@@ -54,21 +53,14 @@ module.exports = {
         use: [
           { loader: "style-loader" },
           { loader: "css-loader" },
-          //    AntdScssThemePlugin.themify('less-loader') // Plugin for theming ant
           {
             loader: "less-loader",
             options: {
               javascriptEnabled: true,
               modifyVars: {
-                // "primary-color": "#0070ba", // primary color for all components
-                // "link-color": "#0070ba", // link color
-                // "success-color": "#52c41a", // success state color
-                // "warning-color": "#faad14", // warning state color
-                // "error-color": "#f5222d", // error state color
-                // "font-size-base": "14px", // major text font size
+                "primary-color": "rgba(24, 144, 255, 0.85)", // primary color for all components
+                "link-color": "rgba(24, 144, 255, 0.85)", // link color
                 "border-radius-base": "6px", // major border radius
-                // "border-color-base": "#d9d9d9", // major border color
-                // "box-shadow-base": "0 2px 8px rgba(0, 0, 0, 0.15)", // major shadow for layers
               }
             },
           },
@@ -96,7 +88,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./src/index.html",
     }),
-    new Dotenv(),
-    // new AntdScssThemePlugin(path.join(__dirname, "src", "ant-overrides.scss")),
+    new Dotenv()
   ],
 };
