@@ -6,9 +6,10 @@ A social e-commerce app built with Node.js, React, MongoDB and Webpack.
 
 Main Features:
 - Credit Card payments
+- Cloud file uploads
 - Search bar
 - Send emails
-- User login
+- Change password
 - Profile with user activity history
 
 Known issues:
